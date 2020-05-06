@@ -15,10 +15,10 @@ namespace {
             {0.0, 1.0}
         };
 
-        ASSERT_EQ(UnityMatrix.Get(0, 0), 1.0f);
-        ASSERT_EQ(UnityMatrix.Get(0, 1), 0.0f);
-        ASSERT_EQ(UnityMatrix.Get(1, 0), 0.0f);
-        ASSERT_EQ(UnityMatrix.Get(1, 1), 1.0f);
+        ASSERT_EQ(UnityMatrix.get(0, 0), 1.0f);
+        ASSERT_EQ(UnityMatrix.get(0, 1), 0.0f);
+        ASSERT_EQ(UnityMatrix.get(1, 0), 0.0f);
+        ASSERT_EQ(UnityMatrix.get(1, 1), 1.0f);
 
         MatrixF TestMatrix = UnityMatrix;
         ASSERT_EQ(UnityMatrix, TestMatrix);
@@ -28,8 +28,8 @@ namespace {
             {1.0, 1.0}
         };
 
-        TestMatrix.Set(0, 1, 1.0f);
-        TestMatrix.Set(1, 0, 1.0f);
+        TestMatrix.set(0, 1, 1.0f);
+        TestMatrix.set(1, 0, 1.0f);
 
         ASSERT_EQ(TestMatrix, Result);
         ASSERT_NE(TestMatrix, UnityMatrix);
@@ -68,33 +68,36 @@ namespace {
             return value / 2.5f;
         };
 
-        ASSERT_EQ(MulResult.Apply(fx), UnityMatrix );
+        ASSERT_EQ(MulResult.apply(fx), UnityMatrix);
     }
 
 
     TEST(MatrixTests, IteratorTest)
     {
-        MatrixF testMatrix = {
+        MatrixF testMatrix2 = {
             {1.0f, 2.0f, 3.0f},
             {4.0f, 5.0f, 6.0f},
             {7.0f, 8.0f, 9.0f},
         };
 
+        const auto &testMatrix = testMatrix2;
+
         const std::array<float, 3> expectedRowResult = { 4.0f, 5.0f, 6.0f };
         const std::array<float, 3> expectedColumnResult = { 2.0f, 5.0f, 8.0f };
 
         std::vector<float> result;
+        // const version
         // traverse
         float value = 1.0f;
 
-        for (auto it = testMatrix.Begin(); it != testMatrix.End(); ++it)
+        for (auto it = testMatrix.cBegin(); it != testMatrix.cEnd(); ++it)
         {
             ASSERT_TRUE(*it == value);
             value += 1.0f;
         }
 
         // row iterator
-        for (auto it = testMatrix.RowBegin(1); it != testMatrix.RowEnd(1); ++it)
+        for (auto it = testMatrix.cRowBegin(1); it != testMatrix.cRowEnd(1); ++it)
         {
             result.push_back(*it);
         }
@@ -102,7 +105,32 @@ namespace {
 
         // column iterator
         result.clear();
-        for (auto it = testMatrix.ColumnBegin(1); it != testMatrix.ColumnEnd(1); ++it)
+        for (auto it = testMatrix.cColumnBegin(1); it != testMatrix.cColumnEnd(1); ++it)
+        {
+            result.push_back(*it);
+        }
+        ASSERT_TRUE(boost::equal(expectedColumnResult, result));
+
+        // non const version
+
+        value = 1.0f;
+        for (auto it = testMatrix2.begin(); it != testMatrix2.end(); ++it)
+        {
+            ASSERT_TRUE(*it == value);
+            value += 1.0f;
+        }
+
+        result.clear();
+        // row iterator
+        for (auto it = testMatrix2.rowBegin(1); it != testMatrix2.rowEnd(1); ++it)
+        {
+            result.push_back(*it);
+        }
+        ASSERT_TRUE(boost::equal(expectedRowResult, result));
+
+        // column iterator
+        result.clear();
+        for (auto it = testMatrix2.columnBegin(1); it != testMatrix2.columnEnd(1); ++it)
         {
             result.push_back(*it);
         }

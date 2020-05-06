@@ -26,7 +26,8 @@ public:
     using row_init_list = std::initializer_list<element_type>;
     using matrix_init_list = std::initializer_list<row_init_list>;
     using function_type = std::function<element_type(element_type)>;
-    using iterator = math::matrix_iterator<Matrix<T>>;
+    using iterator = math::matrix_iterator<element_type>;
+    using const_iterator = math::matrix_iterator<const element_type>;
 
 private:
     storage mData;
@@ -48,7 +49,7 @@ private:
     }
 
     template<class BF>
-    static self_type internal_binary_func_apply(const self_type &lhs, const self_type &rhs, BF &fx)
+    static self_type internalBinaryFuncApply(const self_type &lhs, const self_type &rhs, BF &fx)
     {
         BOOST_ASSERT(lhs.mRowCount == rhs.mRowCount && lhs.mColumnCount == rhs.mColumnCount);
         self_type result = make_matrix<T>(lhs.mRowCount, lhs.mColumnCount);
@@ -57,7 +58,7 @@ private:
     }
 
     template<class UF>
-    static Matrix<T> internal_unary_func_apply(const Matrix<T> &lhs, UF &fx)
+    static Matrix<T> internalUnaryFuncApply(const Matrix<T> &lhs, UF &fx)
     {
         self_type result = make_matrix<T>(lhs.mRowCount, lhs.mColumnCount);
         boost::transform(lhs.mData, result.mData.begin(), fx);
@@ -82,7 +83,7 @@ public:
     self_type& operator=(const self_type &other) = default;
     self_type& operator=(self_type &&other) = default;
 
-    self_type& Resize(size_t nRow, size_t nColumn)
+    self_type& resize(size_t nRow, size_t nColumn)
     {
         mData.resize(nRow * nColumn);
         mColumnCount = nColumn;
@@ -91,23 +92,98 @@ public:
         return *this;
     }
 
-    T& Get(size_t nRow, size_t nColumn)
+    T& get(size_t nRow, size_t nColumn)
     {
         BOOST_ASSERT(nRow < mRowCount && nColumn < mColumnCount);
         return mData[nRow * mRowCount + nColumn];
     }
 
-    const T& Get(size_t nRow, size_t nColumn) const
+    const T& get(size_t nRow, size_t nColumn) const
     {
         BOOST_ASSERT(nRow < mRowCount && nColumn < mColumnCount);
         return mData[nRow * mRowCount + nColumn];
     }
 
-    self_type& Set(const size_t nRow, const size_t nColumn, T value)
+    self_type& set(const size_t nRow, const size_t nColumn, T value)
     {
-        Get(nRow, nColumn) = value;
+        get(nRow, nColumn) = value;
         return *this;
     }
+
+    self_type apply(std::function<T(T)> &fx) const
+    {
+        return internalUnaryFuncApply(*this, fx);
+    }
+
+    iterator rowBegin(size_t nRow)
+    {
+        return iterator(mData.data() + nRow * mColumnCount);
+    }
+
+    const_iterator rowBegin(size_t nRow) const
+    {
+        return const_iterator(mData.data() + nRow * mColumnCount);
+    }
+
+    iterator rowEnd(size_t nRow)
+    {
+        return iterator(mData.data() + nRow * mColumnCount + mColumnCount);
+    }
+
+    const_iterator rowEnd(size_t nRow) const
+    {
+        return const_iterator(mData.data() + nRow * mColumnCount + mColumnCount);
+    }
+
+    iterator columnBegin(size_t nColumn)
+    {
+        return iterator(mData.data() + nColumn, mColumnCount);
+    }
+
+    const_iterator columnBegin(size_t nColumn) const
+    {
+        return const_iterator(mData.data() + nColumn, mColumnCount);
+    }
+
+    iterator columnEnd(size_t nColumn)
+    {
+        return iterator(mData.data() + mRowCount * mColumnCount + nColumn, mColumnCount);
+    }
+
+    const_iterator columnEnd(size_t nColumn) const
+    {
+        return const_iterator(mData.data() + mRowCount * mColumnCount + nColumn, mColumnCount);
+    }
+
+    iterator begin()
+    {
+        return iterator(mData.data());
+    }
+
+    const_iterator begin() const
+    {
+        return const_iterator(mData.data());
+    }
+
+    iterator end()
+    {
+        return iterator(mData.data() + mRowCount * mColumnCount);
+    }
+
+    const_iterator end() const
+    {
+        return const_iterator(mData.data() + mRowCount * mColumnCount);
+    }
+
+    const_iterator cRowBegin(size_t nRow) const { return rowBegin(nRow); }
+    const_iterator cRowEnd(size_t nRow) const { return rowEnd(nRow); }
+    const_iterator cColumnBegin(size_t nColumn) const { return columnBegin(nColumn); }
+    const_iterator cColumnEnd(size_t nColumn) const { return columnEnd(nColumn); }
+    const_iterator cBegin() const { return begin(); }
+    const_iterator cEnd() const { return end(); }
+
+
+    // Non member functions
 
     friend bool operator==(const self_type &lhs, const self_type &rhs)
     {
@@ -121,88 +197,48 @@ public:
 
     friend self_type operator+(const self_type &lhs, const self_type &rhs)
     {
-        return internal_binary_func_apply(lhs, rhs, std::plus<T>());
+        return internalBinaryFuncApply(lhs, rhs, std::plus<T>());
     }
 
     friend self_type operator-(const self_type &lhs, const self_type &rhs)
     {
-        return internal_binary_func_apply(lhs, rhs, std::minus<T>());
+        return internalBinaryFuncApply(lhs, rhs, std::minus<T>());
     }
 
     friend self_type operator+(const self_type &lhs, T value)
     {
-        return internal_unary_func_apply(lhs, [&value](T val){
+        return internalUnaryFuncApply(lhs, [&value](T val){
             return value + val;
         });
     }
 
     friend self_type operator-(const self_type &lhs, T value)
     {
-        return internal_unary_func_apply(lhs, [&value](T val) {
+        return internalUnaryFuncApply(lhs, [&value](T val) {
             return value - val;
         });
     }
 
     friend self_type operator*(const self_type &lhs, T value)
     {
-        return internal_unary_func_apply(lhs, [&value](T val) {
+        return internalUnaryFuncApply(lhs, [&value](T val) {
             return value * val;
         });
     }
 
     friend self_type operator/(const self_type &lhs, T external_value)
     {
-        return internal_unary_func_apply(lhs, [&external_value](T val) {
+        return internalUnaryFuncApply(lhs, [&external_value](T val) {
             return val / external_value;
         });
     }
-
-    self_type Apply(std::function<T(T)> &fx)
-    {
-        return internal_unary_func_apply(*this, fx);
-    }
-
-    iterator RowBegin(size_t nRow)
-    {
-        auto startElement = mData.data() + nRow * mColumnCount;
-        return iterator(this, startElement, 1);
-    }
-
-    iterator RowEnd(size_t nRow)
-    {
-        auto startElement = mData.data() + nRow * mColumnCount + mColumnCount;
-        return iterator(this, startElement, 1);
-    }
-
-    iterator ColumnBegin(size_t nColumn)
-    {
-        auto startElement = mData.data() + nColumn;
-        return iterator(this, startElement, mColumnCount);
-    }
-
-    iterator ColumnEnd(size_t nColumn)
-    {
-        auto startElement = mData.data() + mRowCount * mColumnCount + nColumn;
-        return iterator(this, startElement, mColumnCount);
-    }
-
-    iterator Begin()
-    {
-        return iterator(this, mData.data(), 1);
-    }
-
-    iterator End()
-    {
-        return iterator(this, mData.data() + mRowCount * mColumnCount, 1);
-    }
-
 };
 
 template<typename T>
 math::Matrix<T> make_matrix(const size_t rowCount, const size_t columnCount)
 {
     Matrix<T> result;
-    result.Resize(rowCount, columnCount);
+    result.resize(rowCount, columnCount);
     return result;
 }
 

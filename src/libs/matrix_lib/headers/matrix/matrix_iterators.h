@@ -1,28 +1,27 @@
 #pragma once
 #include <iterator>
+#include <type_traits>
 #include <boost/assert.hpp>
 
 namespace math {
 
-template<class M>
+template<typename VALUE_TYPE>
 class matrix_iterator
 {
 public:
-    using self_type = matrix_iterator<M>;
+    using self_type = matrix_iterator<VALUE_TYPE>;
     using iterator_category = std::random_access_iterator_tag;
-    using value_type = typename M::element_type;
-    using pointer = typename M::element_type *;
-    using reference = typename M::element_type &;
+    using value_type = typename VALUE_TYPE;
+    using pointer =  typename std::add_pointer<typename VALUE_TYPE>::type;
+    using reference = typename std::add_lvalue_reference<typename VALUE_TYPE>::type;
     using difference_type = std::ptrdiff_t;
 private:
-    M *mPointsTo = nullptr;
     pointer mCurrentElement = nullptr;
     size_t mIncrement = 1;
 public:
     matrix_iterator() = default;
-    matrix_iterator(M *pointsTo, pointer currentElement, size_t increment = 1)
-        : mPointsTo(pointsTo)
-        , mCurrentElement(currentElement)
+    matrix_iterator(pointer currentElement, size_t increment = 1)
+        : mCurrentElement(currentElement)
         , mIncrement(increment)
     {
     }
@@ -32,9 +31,7 @@ public:
 
     bool operator==(const self_type &otherIt)
     {
-        BOOST_ASSERT(mPointsTo == otherIt.mPointsTo);
-        return mPointsTo == otherIt.mPointsTo &&
-            mCurrentElement == otherIt.mCurrentElement;
+        return mCurrentElement == otherIt.mCurrentElement && mIncrement == otherIt.mIncrement;
     }
 
     bool operator!=(const self_type &otherIt)
