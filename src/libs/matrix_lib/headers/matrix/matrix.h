@@ -10,6 +10,8 @@
 #include <boost/range/algorithm/transform.hpp>
 #include <boost/assert.hpp>
 
+#include <matrix/matrix_iterators.h>
+
 namespace math {
 
 template<typename T = float>
@@ -159,6 +161,41 @@ public:
     {
         return internal_unary_func_apply(*this, fx);
     }
+
+    iterator RowBegin(size_t nRow)
+    {
+        auto startElement = mData.data() + nRow * mColumnCount;
+        return iterator(this, startElement, 1);
+    }
+
+    iterator RowEnd(size_t nRow)
+    {
+        auto startElement = mData.data() + nRow * mColumnCount + mColumnCount;
+        return iterator(this, startElement, 1);
+    }
+
+    iterator ColumnBegin(size_t nColumn)
+    {
+        auto startElement = mData.data() + nColumn;
+        return iterator(this, startElement, mColumnCount);
+    }
+
+    iterator ColumnEnd(size_t nColumn)
+    {
+        auto startElement = mData.data() + mRowCount * mColumnCount + nColumn;
+        return iterator(this, startElement, mColumnCount);
+    }
+
+    iterator Begin()
+    {
+        return iterator(this, mData.data(), 1);
+    }
+
+    iterator End()
+    {
+        return iterator(this, mData.data() + mRowCount * mColumnCount, 1);
+    }
+
 };
 
 template<typename T>

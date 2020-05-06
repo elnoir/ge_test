@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <matrix/matrix.h>
+#include <array>
 
 namespace {
     using MatrixF = math::Matrix<float>;
@@ -68,5 +69,43 @@ namespace {
         };
 
         ASSERT_EQ(MulResult.Apply(fx), UnityMatrix );
+    }
+
+
+    TEST(MatrixTests, IteratorTest)
+    {
+        MatrixF testMatrix = {
+            {1.0f, 2.0f, 3.0f},
+            {4.0f, 5.0f, 6.0f},
+            {7.0f, 8.0f, 9.0f},
+        };
+
+        const std::array<float, 3> expectedRowResult = { 4.0f, 5.0f, 6.0f };
+        const std::array<float, 3> expectedColumnResult = { 2.0f, 5.0f, 8.0f };
+
+        std::vector<float> result;
+        // traverse
+        float value = 1.0f;
+
+        for (auto it = testMatrix.Begin(); it != testMatrix.End(); ++it)
+        {
+            ASSERT_TRUE(*it == value);
+            value += 1.0f;
+        }
+
+        // row iterator
+        for (auto it = testMatrix.RowBegin(1); it != testMatrix.RowEnd(1); ++it)
+        {
+            result.push_back(*it);
+        }
+        ASSERT_TRUE(boost::equal(expectedRowResult, result));
+
+        // column iterator
+        result.clear();
+        for (auto it = testMatrix.ColumnBegin(1); it != testMatrix.ColumnEnd(1); ++it)
+        {
+            result.push_back(*it);
+        }
+        ASSERT_TRUE(boost::equal(expectedColumnResult, result));
     }
 }
