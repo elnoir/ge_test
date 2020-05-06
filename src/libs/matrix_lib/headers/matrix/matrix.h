@@ -20,16 +20,18 @@ private:
 
 public:
     using element_type = T;
+    using self_type = Matrix<T>;
     using row_init_list = std::initializer_list<element_type>;
     using matrix_init_list = std::initializer_list<row_init_list>;
     using function_type = std::function<element_type(element_type)>;
+    using iterator = math::matrix_iterator<Matrix<T>>;
 
 private:
     storage mData;
     size_t mRowCount = 0;
     size_t mColumnCount = 0;
 
-    Matrix<T>& appendRow(const row_init_list &rowList)
+    self_type& appendRow(const row_init_list &rowList)
     {
         if (mColumnCount == 0)
         {
@@ -44,10 +46,10 @@ private:
     }
 
     template<class BF>
-    static Matrix<T> internal_binary_func_apply(const Matrix<T> &lhs, const Matrix<T> &rhs, BF &fx)
+    static self_type internal_binary_func_apply(const self_type &lhs, const self_type &rhs, BF &fx)
     {
         BOOST_ASSERT(lhs.mRowCount == rhs.mRowCount && lhs.mColumnCount == rhs.mColumnCount);
-        Matrix result = make_matrix<T>(lhs.mRowCount, lhs.mColumnCount);
+        self_type result = make_matrix<T>(lhs.mRowCount, lhs.mColumnCount);
         boost::transform(lhs.mData, rhs.mData, result.mData.begin(), fx);
         return result;
     }
@@ -55,15 +57,15 @@ private:
     template<class UF>
     static Matrix<T> internal_unary_func_apply(const Matrix<T> &lhs, UF &fx)
     {
-        Matrix result = make_matrix<T>(lhs.mRowCount, lhs.mColumnCount);
+        self_type result = make_matrix<T>(lhs.mRowCount, lhs.mColumnCount);
         boost::transform(lhs.mData, result.mData.begin(), fx);
         return result;
     }
 
 public:
     Matrix() = default;
-    Matrix(const Matrix<T> &other) = default;
-    Matrix(Matrix<T> &&other) = default;
+    Matrix(const self_type &other) = default;
+    Matrix(self_type &&other) = default;
 
     Matrix(matrix_init_list &&matrixList)
     {
@@ -75,10 +77,10 @@ public:
         }
     }
 
-    Matrix<T>& operator=(const Matrix<T> &other) = default;
-    Matrix<T>& operator=(Matrix<T> &&other) = default;
+    self_type& operator=(const self_type &other) = default;
+    self_type& operator=(self_type &&other) = default;
 
-    Matrix<T>& Resize(size_t nRow, size_t nColumn)
+    self_type& Resize(size_t nRow, size_t nColumn)
     {
         mData.resize(nRow * nColumn);
         mColumnCount = nColumn;
@@ -99,61 +101,61 @@ public:
         return mData[nRow * mRowCount + nColumn];
     }
 
-    Matrix<T>& Set(const size_t nRow, const size_t nColumn, T value)
+    self_type& Set(const size_t nRow, const size_t nColumn, T value)
     {
         Get(nRow, nColumn) = value;
         return *this;
     }
 
-    friend bool operator==(const Matrix &lhs, const Matrix &rhs)
+    friend bool operator==(const self_type &lhs, const self_type &rhs)
     {
         return lhs.mRowCount == rhs.mRowCount && lhs.mColumnCount == rhs.mColumnCount && boost::equal(lhs.mData, rhs.mData);
     }
 
-    friend bool operator!=(const Matrix &lhs, const Matrix &rhs)
+    friend bool operator!=(const self_type &lhs, const self_type &rhs)
     {
         return !(lhs == rhs);
     }
 
-    friend Matrix operator+(const Matrix &lhs, const Matrix &rhs)
+    friend self_type operator+(const self_type &lhs, const self_type &rhs)
     {
         return internal_binary_func_apply(lhs, rhs, std::plus<T>());
     }
 
-    friend Matrix operator-(const Matrix &lhs, const Matrix &rhs)
+    friend self_type operator-(const self_type &lhs, const self_type &rhs)
     {
         return internal_binary_func_apply(lhs, rhs, std::minus<T>());
     }
 
-    friend Matrix operator+(const Matrix &lhs, T value)
+    friend self_type operator+(const self_type &lhs, T value)
     {
         return internal_unary_func_apply(lhs, [&value](T val){
             return value + val;
         });
     }
 
-    friend Matrix operator-(const Matrix &lhs, T value)
+    friend self_type operator-(const self_type &lhs, T value)
     {
         return internal_unary_func_apply(lhs, [&value](T val) {
             return value - val;
         });
     }
 
-    friend Matrix operator*(const Matrix &lhs, T value)
+    friend self_type operator*(const self_type &lhs, T value)
     {
         return internal_unary_func_apply(lhs, [&value](T val) {
             return value * val;
         });
     }
 
-    friend Matrix operator/(const Matrix &lhs, T external_value)
+    friend self_type operator/(const self_type &lhs, T external_value)
     {
         return internal_unary_func_apply(lhs, [&external_value](T val) {
             return val / external_value;
         });
     }
 
-    Matrix Apply(std::function<T(T)> &fx)
+    self_type Apply(std::function<T(T)> &fx)
     {
         return internal_unary_func_apply(*this, fx);
     }
