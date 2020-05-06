@@ -24,5 +24,14 @@
     },
     "gtest-adapter.debugConfig": [
         "Matrix gtest"
-    ]
+    ],
+    "gtest-adapter.supportLocation": true,
+    "files.associations": {
+        "functional": "cpp",
+        "optional": "cpp",
+        "system_error": "cpp",
+        "type_traits": "cpp",
+        "xlocmon": "cpp",
+        "xtr1common": "cpp"
+    }
 }
