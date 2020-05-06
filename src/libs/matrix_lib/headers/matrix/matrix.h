@@ -146,10 +146,10 @@ public:
         });
     }
 
-    friend Matrix operator/(const Matrix &lhs, T value)
+    friend Matrix operator/(const Matrix &lhs, T external_value)
     {
-        return internal_unary_func_apply(lhs, [&value](T val) {
-            return value * val;
+        return internal_unary_func_apply(lhs, [&external_value](T val) {
+            return val / external_value;
         });
     }
 

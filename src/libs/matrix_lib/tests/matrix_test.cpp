@@ -34,7 +34,7 @@ namespace {
         ASSERT_NE(TestMatrix, UnityMatrix);
     }
 
-    TEST(MatrixTests, OperatorTests)
+    TEST(MatrixTests, OperatorTest)
     {
         MatrixF UnityMatrix = {
             {1.0, 0.0},
