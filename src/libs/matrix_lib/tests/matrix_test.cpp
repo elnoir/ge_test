@@ -20,16 +20,19 @@ namespace {
         ASSERT_EQ(UnityMatrix.get(1, 0), 0.0f);
         ASSERT_EQ(UnityMatrix.get(1, 1), 1.0f);
 
+        ASSERT_EQ(UnityMatrix.getColumnCount(), 2);
+        ASSERT_EQ(UnityMatrix.getRowCount(), 2);
+
         MatrixF TestMatrix = UnityMatrix;
         ASSERT_EQ(UnityMatrix, TestMatrix);
 
-        MatrixF Result = {
+        TestMatrix.set(0, 1, 1.0f);
+        TestMatrix.set(1, 0, 1.0f);
+
+        const MatrixF Result = {
             {1.0, 1.0},
             {1.0, 1.0}
         };
-
-        TestMatrix.set(0, 1, 1.0f);
-        TestMatrix.set(1, 0, 1.0f);
 
         ASSERT_EQ(TestMatrix, Result);
         ASSERT_NE(TestMatrix, UnityMatrix);
