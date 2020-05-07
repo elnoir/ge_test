@@ -103,16 +103,18 @@ public:
     {
         return mRowCount;
     }
+
+    // value access
     T& get(size_t nRow, size_t nColumn)
     {
         BOOST_ASSERT(nRow < mRowCount && nColumn < mColumnCount);
-        return mData[nRow * mRowCount + nColumn];
+        return mData[nRow * mColumnCount + nColumn];
     }
 
     const T& get(size_t nRow, size_t nColumn) const
     {
         BOOST_ASSERT(nRow < mRowCount && nColumn < mColumnCount);
-        return mData[nRow * mRowCount + nColumn];
+        return mData[nRow * mColumnCount + nColumn];
     }
 
     self_type& set(const size_t nRow, const size_t nColumn, T value)
