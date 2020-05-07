@@ -164,4 +164,26 @@ namespace {
 
         ASSERT_TRUE(result == expectedResult);
     }
+    TEST(MatrixTests, Transpose)
+    {
+        const MatrixF UnityMatrix = {
+            {1.0f, 0.0f},
+            {0.0f, 1.0f}
+        };
+
+        ASSERT_TRUE(UnityMatrix == UnityMatrix.transpose());
+
+        const MatrixF row3 = {
+            {1.0f, 2.0f, 3.0f}
+        };
+
+        const auto column3 = row3.transpose();
+
+        for (int i = 0; i < row3.getColumnCount(); ++i)
+        {
+            ASSERT_EQ(row3.get(0, i), column3.get(i, 0));
+        }
+
+        ASSERT_EQ(row3, row3.transpose().transpose());
+    }
 }
