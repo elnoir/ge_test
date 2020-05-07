@@ -66,6 +66,7 @@ private:
     }
 
 public:
+    // init
     Matrix() = default;
     Matrix(const self_type &other) = default;
     Matrix(self_type &&other) = default;
@@ -83,6 +84,7 @@ public:
     self_type& operator=(const self_type &other) = default;
     self_type& operator=(self_type &&other) = default;
 
+    // size related
     self_type& resize(size_t nRow, size_t nColumn)
     {
         mData.resize(nRow * nColumn);
@@ -92,6 +94,15 @@ public:
         return *this;
     }
 
+    size_t getColumnCount() const
+    {
+        return mColumnCount;
+    }
+
+    size_t getRowCount() const
+    {
+        return mRowCount;
+    }
     T& get(size_t nRow, size_t nColumn)
     {
         BOOST_ASSERT(nRow < mRowCount && nColumn < mColumnCount);
