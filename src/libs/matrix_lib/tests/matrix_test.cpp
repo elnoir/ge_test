@@ -38,12 +38,14 @@ namespace {
         ASSERT_NE(TestMatrix, UnityMatrix);
     }
 
-    TEST(MatrixTests, OperatorTest)
+
+    TEST(MatrixTests, BasicOperatorTest)
     {
         MatrixF UnityMatrix = {
             {1.0, 0.0},
             {0.0, 1.0}
         };
+
         MatrixF OtherMatrix = {
             {0.0, 1.0},
             {2.0, 3.0}
@@ -115,7 +117,6 @@ namespace {
         ASSERT_TRUE(boost::equal(expectedColumnResult, result));
 
         // non const version
-
         value = 1.0f;
         for (auto it = testMatrix2.begin(); it != testMatrix2.end(); ++it)
         {
@@ -139,6 +140,7 @@ namespace {
         }
         ASSERT_TRUE(boost::equal(expectedColumnResult, result));
     }
+
 
     TEST(MatrixTests, Multiplication)
     {
@@ -164,6 +166,8 @@ namespace {
 
         ASSERT_TRUE(result == expectedResult);
     }
+
+
     TEST(MatrixTests, Transpose)
     {
         const MatrixF UnityMatrix = {
