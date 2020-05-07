@@ -4,6 +4,7 @@
 #include <vector>
 #include <exception>
 #include <functional>
+#include <numeric>
 
 #include <boost/range/algorithm_ext/push_back.hpp>
 #include <boost/range/algorithm/equal.hpp>
@@ -253,6 +254,23 @@ public:
         return internalUnaryFuncApply(lhs, [&value](T val) {
             return value * val;
         });
+    }
+
+    friend self_type operator*(const self_type &lhs, const self_type &rhs)
+    {
+        BOOST_ASSERT(lhs.mColumnCount == rhs.mRowCount);
+        auto result = make_matrix<self_type::element_type>(lhs.mRowCount, rhs.mColumnCount);
+        for (size_t i = 0; i < result.mRowCount; ++i)
+        {
+            for (size_t j = 0; j < result.mColumnCount; ++j)
+            {
+                result.set(
+                    i, j,
+                    std::inner_product(lhs.cRowBegin(i), lhs.cRowEnd(i), rhs.cColumnBegin(j), 0.0f)
+                );
+            }
+        }
+        return result;
     }
 
     friend self_type operator/(const self_type &lhs, T external_value)
