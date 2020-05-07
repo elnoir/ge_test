@@ -123,10 +123,26 @@ public:
         return *this;
     }
 
+    // operators
     self_type apply(std::function<T(T)> &fx) const
     {
         return internalUnaryFuncApply(*this, fx);
     }
+
+    self_type transpose() const
+    {
+        auto result = make_matrix<element_type>(mColumnCount, mRowCount);
+        for (size_t i = 0; i < mRowCount; ++i)
+        {
+            for (size_t j = 0; j < mColumnCount; ++j)
+            {
+                result.set(j, i, get(i, j));
+            }
+        }
+        return result;
+    }
+
+    // iterators
 
     iterator rowBegin(size_t nRow)
     {
