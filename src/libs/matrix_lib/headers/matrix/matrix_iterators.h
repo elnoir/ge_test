@@ -10,7 +10,7 @@ class matrix_iterator
 {
 public:
     using self_type = matrix_iterator<VALUE_TYPE>;
-    using iterator_category = std::random_access_iterator_tag;
+    using iterator_category = std::bidirectional_iterator_tag;
     using value_type = typename VALUE_TYPE;
     using pointer =  typename std::add_pointer<typename VALUE_TYPE>::type;
     using reference = typename std::add_lvalue_reference<typename VALUE_TYPE>::type;
