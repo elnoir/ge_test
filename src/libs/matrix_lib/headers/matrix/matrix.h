@@ -289,4 +289,6 @@ math::Matrix<T> make_matrix(const size_t rowCount, const size_t columnCount)
     return result;
 }
 
+using MatrixF = Matrix<float>;
+
 }

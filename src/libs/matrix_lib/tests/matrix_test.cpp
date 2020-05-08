@@ -3,7 +3,7 @@
 #include <array>
 
 namespace {
-    using MatrixF = math::Matrix<float>;
+    using MatrixF = math::MatrixF;
 
     /**
      * Basic initialization test with getters and setters
