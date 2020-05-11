@@ -23,6 +23,7 @@
         ]
     },
     "gtest-adapter.debugConfig": [
+        "MinstDB check",
         "Matrix gtest"
     ],
     "gtest-adapter.supportLocation": true,
