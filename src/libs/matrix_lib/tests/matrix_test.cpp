@@ -190,4 +190,35 @@ namespace {
 
         ASSERT_EQ(row3, row3.transpose().transpose());
     }
+
+    TEST(MatrixTests, AdvancedConcepts)
+    {
+        const MatrixF testMatrix = {
+            {1.0f, 2.1f},
+            {2.0f, 2.1f},
+            {3.0f, 3.1f}
+        };
+        ASSERT_FLOAT_EQ(13.3f, math::sum(testMatrix));
+
+        auto cSumRes = math::columnSum(testMatrix);
+
+        ASSERT_FLOAT_EQ(6.0f, cSumRes.get(0,0));
+        ASSERT_FLOAT_EQ(7.3f, cSumRes.get(0,1));
+
+        const MatrixF softMaxResult = {
+            {0.03955408f, 0.11882703f},
+            {0.10751915f, 0.11882703f},
+            {0.29226734f, 0.32300536f},
+        };
+
+        auto r = math::softMax(testMatrix);
+        ASSERT_FLOAT_EQ(softMaxResult.get(0,0) , r.get(0,0));
+        ASSERT_FLOAT_EQ(softMaxResult.get(0,1) , r.get(0,1));
+        ASSERT_FLOAT_EQ(softMaxResult.get(1,0) , r.get(1,0));
+        ASSERT_FLOAT_EQ(softMaxResult.get(1,1) , r.get(1,1));
+        ASSERT_FLOAT_EQ(softMaxResult.get(2,0) , r.get(2,0));
+        ASSERT_FLOAT_EQ(softMaxResult.get(2,1) , r.get(2,1));
+
+    }
+
 }

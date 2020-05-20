@@ -5,6 +5,7 @@
 #include <exception>
 #include <functional>
 #include <numeric>
+#include <algorithm>
 
 #include <boost/range/algorithm_ext/push_back.hpp>
 #include <boost/range/algorithm/equal.hpp>
@@ -125,7 +126,7 @@ public:
     }
 
     // operators
-    self_type apply(std::function<T(T)> &fx) const
+    self_type apply(std::function<T(T)> fx) const
     {
         return internalUnaryFuncApply(*this, fx);
     }
@@ -212,6 +213,21 @@ public:
     const_iterator cBegin() const { return begin(); }
     const_iterator cEnd() const { return end(); }
 
+    self_type addColumnVector(const self_type &rhs) const
+    {
+        BOOST_ASSERT(rhs.mRowCount == mRowCount);
+        BOOST_ASSERT(rhs.mColumnCount == 1);
+        auto result = make_matrix<element_type>(mRowCount, mColumnCount);
+        for (size_t i = 0; i < mRowCount; ++i)
+        {
+            for (auto j = 0; j < mColumnCount; ++j)
+            {
+                result.set(i, j, get(i,j) + rhs.get(i, 1));
+            }
+        }
+        return result;
+    }
+
 
     // Non member functions
 
@@ -235,24 +251,31 @@ public:
         return internalBinaryFuncApply(lhs, rhs, std::minus<T>());
     }
 
-    friend self_type operator+(const self_type &lhs, T value)
+    friend self_type operator+(const self_type &lhs, T rhs_value)
     {
-        return internalUnaryFuncApply(lhs, [&value](T val){
-            return value + val;
+        return internalUnaryFuncApply(lhs, [&rhs_value](T val){
+            return val + rhs_value;
         });
     }
 
-    friend self_type operator-(const self_type &lhs, T value)
+    friend self_type operator-(const self_type &lhs, T rhs_value)
     {
-        return internalUnaryFuncApply(lhs, [&value](T val) {
-            return value - val;
+        return internalUnaryFuncApply(lhs, [&rhs_value](T val) {
+            return val - rhs_value;
         });
     }
 
-    friend self_type operator*(const self_type &lhs, T value)
+    friend self_type operator*(const self_type &lhs, T rhs_value)
     {
-        return internalUnaryFuncApply(lhs, [&value](T val) {
-            return value * val;
+        return internalUnaryFuncApply(lhs, [&rhs_value](T val) {
+            return val * rhs_value;
+        });
+    }
+
+    friend self_type operator*(const T &lhs,const self_type &rhs_value)
+    {
+        return internalUnaryFuncApply(rhs_value, [&lhs](T val) {
+            return val * lhs;
         });
     }
 
@@ -290,5 +313,32 @@ math::Matrix<T> make_matrix(const size_t rowCount, const size_t columnCount)
 }
 
 using MatrixF = Matrix<float>;
+
+template<typename T>
+T sum(const Matrix<T>& in)
+{
+    return std::accumulate(in.cBegin(), in.cEnd(), static_cast<T>(0));
+}
+
+template<typename T>
+Matrix<T> columnSum(const Matrix<T>& in)
+{
+    auto result = make_matrix<T>(1, in.getColumnCount());
+    for (size_t i = 0; i < in.getColumnCount(); ++i)
+    {
+        auto sum = std::accumulate(in.cColumnBegin(i), in.cColumnEnd(i), static_cast<T>(0));
+        result.set(0, i, sum);
+    }
+    return result;
+}
+
+template<typename T>
+Matrix<T> softMax(const Matrix<T>& in)
+{
+    using c_ptr_t = float(__cdecl *)(float);
+    c_ptr_t expf = std::expf;
+    auto r = in.apply(expf);
+    return  r / sum(r);
+}
 
 }
