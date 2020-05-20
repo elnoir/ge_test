@@ -13,7 +13,8 @@ public:
     virtual bool isDbLoaded() const = 0;
     virtual size_t getImageCount() const = 0;
     virtual math::MatrixF getImageMatrix(size_t index) const = 0;
-    virtual uint8_t getImageLabel(size_t index) const = 0;
+    virtual math::MatrixF getImageLabel(size_t index) const = 0;
+    virtual size_t getPixelCount() const = 0;
     virtual ~DBInterface() = default;
 };
 

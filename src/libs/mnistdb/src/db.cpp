@@ -131,6 +131,12 @@ size_t DB::getImageCount() const
     return mImages->mCount;
 }
 
+size_t DB::getPixelCount() const
+{
+    BOOST_ASSERT(mImages);
+    return mImages->mHeight * mImages->mWidth;
+}
+
 math::MatrixF DB::getImageMatrix(size_t index) const
 {
     auto result = math::make_matrix<float>(mImages->mWidth * mImages->mHeight, 1);
@@ -140,10 +146,12 @@ math::MatrixF DB::getImageMatrix(size_t index) const
     return result;
 }
 
-uint8_t DB::getImageLabel(size_t index) const
+math::MatrixF DB::getImageLabel(size_t index) const
 {
     BOOST_ASSERT(mLabels);
-    return mLabels->getImageClass(index);
+    auto result = math::make_matrix<float>(10, 1);
+    result.set(mLabels->getImageClass(index), 0, 1);
+    return result;
 }
 
 std::unique_ptr<db::DBInterface> createDB()

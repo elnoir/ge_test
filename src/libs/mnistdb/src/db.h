@@ -50,8 +50,9 @@ public:
     bool loadDB(const boost::filesystem::path& imageFilePath, const boost::filesystem::path& lableFilePath) override;
     bool isDbLoaded() const override;
     size_t getImageCount() const override;
+    size_t getPixelCount() const override;
     math::MatrixF getImageMatrix(size_t intdex) const override;
-    uint8_t getImageLabel(size_t) const override;
+    math::MatrixF getImageLabel(size_t) const override;
 
 };
 
