@@ -265,6 +265,13 @@ public:
         });
     }
 
+    friend self_type operator-(T lhs_value, const self_type &rhs)
+    {
+        return internalUnaryFuncApply(rhs, [&lhs_value](T val) {
+            return lhs_value - val;
+        });
+    }
+
     friend self_type operator*(const self_type &lhs, T rhs_value)
     {
         return internalUnaryFuncApply(lhs, [&rhs_value](T val) {
