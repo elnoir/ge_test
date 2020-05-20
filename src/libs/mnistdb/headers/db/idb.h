@@ -17,6 +17,8 @@ public:
     virtual ~DBInterface() = default;
 };
 
-std::unique_ptr<db::DBInterface> createDB();
+using DBInterfacePtr = std::unique_ptr<db::DBInterface>;
+
+db::DBInterfacePtr createDB();
 
 }

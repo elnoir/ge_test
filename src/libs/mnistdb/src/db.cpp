@@ -133,7 +133,7 @@ size_t DB::getImageCount() const
 
 math::MatrixF DB::getImageMatrix(size_t index) const
 {
-    auto result = math::make_matrix<float>(1, mImages->mWidth * mImages->mHeight);
+    auto result = math::make_matrix<float>(mImages->mWidth * mImages->mHeight, 1);
     std::transform(mImages->imageBegin(index), mImages->imageEnd(index), result.begin(), [](uint8_t value) -> float {
         return static_cast<float>(value) / static_cast<float>(std::numeric_limits<uint8_t>::max());
     });
