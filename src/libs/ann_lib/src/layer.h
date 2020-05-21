@@ -8,7 +8,7 @@ namespace ann {
 class Layer
 {
 public:
-    using layerFx = std::function<math::MatrixF(math::MatrixF)>;
+    using layerFx = std::function<math::MatrixF(const math::MatrixF&)>;
 
 private:
     math::MatrixF mInput;
@@ -16,16 +16,17 @@ private:
     math::MatrixF mBias;
     math::MatrixF mZ;
     math::MatrixF mActivation;
-    layerFx mForwardFunc;
 
+    layerFx mForwardFunc;
     layerFx mDerivateFunc;
+
     math::MatrixF mWeightDelta;
     math::MatrixF mBiasDelta;
 
 public:
     Layer(size_t inputRowCount, size_t outputRowCount, layerFx forwardFunc, layerFx derivateFunc);
 
-    math::MatrixF feedForward(math::MatrixF &&inputData);
+    math::MatrixF feedForward(const math::MatrixF &inputData);
     const math::MatrixF& getResult() const { return mActivation; }
 
     math::MatrixF beginBackPropagation(const math::MatrixF &expectedOutput);

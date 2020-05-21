@@ -7,29 +7,52 @@ namespace ann {
 
 float calculateLoss(const math::MatrixF &currentOutput, const math::MatrixF &expectedOutput)
 {
-    auto m = static_cast<float>(currentOutput.getColumnCount());
-    auto L = -(1.0f/m) * (
-        math::sum( currentOutput.apply(std::logf) * expectedOutput) ) +
-        math::sum( (1.0f - currentOutput).apply(std::logf) * ( 1.0f - expectedOutput)
-        );
-
+    auto m = static_cast<float>(expectedOutput.getRowCount());
+    auto hatLog = currentOutput.apply(std::logf);
+    auto yml = expectedOutput.hadamardProduct(hatLog);
+    auto LSum = math::sum(yml);
+    auto L = -(1.0f / m) * LSum;
     return L;
+}
+
+float sigmoid(float value)
+{
+    return 1 / (1 + std::expf(value));
+}
+
+float sigmoidDerived(float value)
+{
+    const auto s = sigmoid(value);
+    return s * (1.0f - s);
+}
+
+float leakyLRU(float value)
+{
+    return std::max<float>(0.01f * value, value);
+}
+
+float leakyLRUDerived(float value)
+{
+    return (value < 0.0f) ? 0.01f : 1.0f;
 }
 
 
 void ANN::configureNetwork(size_t inputSize)
 {
-    Layer::layerFx fLRU = [](math::MatrixF m) {
-        std::function<float(float)> f = [](float value){ return value > 0.0f ? value : 0.0f; };
-        return m.apply(f);
+    Layer::layerFx f = [](const math::MatrixF &m) {
+        return m.apply(leakyLRU);
     };
-    Layer::layerFx fLRUd = [](math::MatrixF m) {
-        std::function<float(float)> f = [](float value){ return value > 0.0f ? 1.0f : 0.0f; };
-        return m.apply(f);
+
+    Layer::layerFx fd = [](const math::MatrixF &m) {
+        return m.apply(leakyLRUDerived);
     };
-    mLayers.emplace_back(inputSize, 16, fLRU, fLRUd);
-    mLayers.emplace_back(16, 16, fLRU, fLRUd);
-    mLayers.emplace_back(16, 10, math::softMax<float>, fLRUd);
+
+    const size_t layerSize1 = 128;
+    const size_t layerSize2 = 64;
+
+    mLayers.emplace_back(inputSize, layerSize1, f, fd);
+    mLayers.emplace_back(layerSize1, layerSize2, f, fd);
+    mLayers.emplace_back(layerSize2, 10, math::softMax<float>, fd);
 }
 
 
@@ -37,7 +60,7 @@ float ANN::train(const math::MatrixF &input, const math::MatrixF &expectedOutput
 {
     auto inputData = input;
     boost::for_each(mLayers, [&inputData](Layer &layer){
-        inputData = layer.feedForward(std::move(inputData));
+        inputData = layer.feedForward(inputData);
     });
 
     auto loss = calculateLoss(mLayers.back().getResult(), expectedOutput);
@@ -48,11 +71,19 @@ float ANN::train(const math::MatrixF &input, const math::MatrixF &expectedOutput
     });
 
     boost::for_each(mLayers, [](Layer &layer){
-        layer.applyGradients(1.0f);
+        layer.applyGradients(0.5f);
     });
 
     return loss;
 }
 
+const math::MatrixF& ANN::test(const math::MatrixF &input)
+{
+    auto inputData = input;
+    boost::for_each(mLayers, [&inputData](Layer &layer) {
+        inputData = layer.feedForward(inputData);
+    });
+    return mLayers.back().getResult();
+}
 
 }

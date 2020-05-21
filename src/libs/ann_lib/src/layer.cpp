@@ -8,8 +8,8 @@
 namespace ann {
 
 Layer::Layer(size_t inputRowCount, size_t outputRowCount, layerFx forwardFunc, layerFx derivateFunc)
-    : mForwardFunc(std::move(forwardFunc))
-    , mDerivateFunc(std::move(derivateFunc))
+    : mForwardFunc(forwardFunc)
+    , mDerivateFunc(derivateFunc)
 {
     mWeights = math::make_matrix<float>(outputRowCount, inputRowCount);
     mBias = math::make_matrix<float>(outputRowCount, 1);
@@ -18,46 +18,50 @@ Layer::Layer(size_t inputRowCount, size_t outputRowCount, layerFx forwardFunc, l
     std::mt19937 generator{rd()};
     std::normal_distribution<float> distribution{0.0f, 1.0f};
 
-    const auto div = std::sqrtf(1.0f / inputRowCount);
+    const auto div = std::sqrtf(static_cast<float>(outputRowCount));
     boost::for_each(mWeights, [&generator, &distribution, &div](float &value) {
         value = distribution(generator) / div;
     });
-    boost::fill(mBias, 0.0f);
+    boost::fill(mBias, 0.01f);
 }
 
-math::MatrixF Layer::feedForward(math::MatrixF &&inputData)
+math::MatrixF Layer::feedForward(const math::MatrixF &inputData)
 {
-    mInput = std::move(inputData);
+    mInput = inputData;
+    //mWeights.DumpInfo("W");
     mZ = (mWeights * mInput).addColumnVector(mBias);
+    //mZ.DumpInfo("Z");
     mActivation = mForwardFunc(mZ);
+    //mActivation.DumpInfo("A");
     return mActivation;
 }
 
 math::MatrixF Layer::beginBackPropagation(const math::MatrixF &expectedOutput)
 {
-    auto lossd = mActivation - expectedOutput;
-    const auto m = mInput.getColumnCount();
+    const auto m = static_cast<float>(mInput.getColumnCount());
 
-    mWeightDelta = (1.0f / m) * mInput.transpose() * lossd;
-    mBiasDelta =  (1.0f / m) * math::columnSum(lossd);
-    return lossd * mWeights.transpose();
+    auto lossd = mActivation - expectedOutput;
+    mWeightDelta = (1.0f / m) * (lossd * mInput.transpose());
+    mBiasDelta =  (1.0f / m) * math::rowSum(lossd);
+
+    return mWeights.transpose() * lossd;
 }
 
 math::MatrixF Layer::calculateGradients(const math::MatrixF& prevDz)
 {
-    const auto m = mInput.getColumnCount();
+    const auto m = static_cast<float>(mInput.getColumnCount());
 
-    const auto dz = prevDz * mDerivateFunc(mActivation);
-    mWeightDelta = (1.0f / m) * mInput.transpose() * dz;
-    mBiasDelta = (1.0f / m) * math::columnSum(dz);
+    const auto dz = prevDz.hadamardProduct(mDerivateFunc(mActivation));
+    mWeightDelta = (1.0f / m) * (dz * mInput.transpose());
+    mBiasDelta = (1.0f / m) * math::rowSum(dz);
 
-    return dz * mWeights.transpose();
+    return mWeights.transpose() * dz;
 }
 
 void Layer::applyGradients(float learnSpeed)
 {
-    mWeights = mWeights - learnSpeed * mWeightDelta;
-    mBias = mBias - learnSpeed * mBiasDelta;
+    mWeights = mWeights - (learnSpeed * mWeightDelta);
+    //mBias = mBias - (learnSpeed * mBiasDelta);
 }
 
 }
