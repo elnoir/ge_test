@@ -52,7 +52,7 @@ void ANN::configureNetwork(size_t inputSize)
 
     mLayers.emplace_back(inputSize, layerSize1, f, fd);
     mLayers.emplace_back(layerSize1, layerSize2, f, fd);
-    mLayers.emplace_back(layerSize2, 10, math::softMax<float>, fd);
+    mLayers.emplace_back(layerSize2, 10, math::columnWiseSoftMax<float>, fd);
 }
 
 

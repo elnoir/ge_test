@@ -383,7 +383,7 @@ Matrix<T> rowSum(const Matrix<T>& in)
 }
 
 template<typename T>
-Matrix<T> softMax(const Matrix<T>& in)
+Matrix<T> columnWiseSoftMax(const Matrix<T>& in)
 {
     using c_ptr_t = float(__cdecl *)(float);
     c_ptr_t expf = std::expf;

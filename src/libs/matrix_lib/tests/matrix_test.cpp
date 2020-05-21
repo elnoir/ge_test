@@ -206,12 +206,12 @@ namespace {
         ASSERT_FLOAT_EQ(7.3f, cSumRes.get(0,1));
 
         const MatrixF softMaxResult = {
-            {0.03955408f, 0.11882703f},
-            {0.10751915f, 0.11882703f},
-            {0.29226734f, 0.32300536f},
+            {0.09003057f, 0.21194156f},
+            {0.24472847f, 0.21194156f},
+            {0.66524096f, 0.57611688f}
         };
 
-        auto r = math::softMax(testMatrix);
+        auto r = math::columnWiseSoftMax<float>(testMatrix);
         ASSERT_FLOAT_EQ(softMaxResult.get(0,0) , r.get(0,0));
         ASSERT_FLOAT_EQ(softMaxResult.get(0,1) , r.get(0,1));
         ASSERT_FLOAT_EQ(softMaxResult.get(1,0) , r.get(1,0));
