@@ -32,12 +32,12 @@ bool SyncController::startTraining()
     size_t trainCount = 0;
 
     float cost = 100.0f;
-    while (rangeGenerator.hasMoreElements() && cost > costLimit)
+    while (rangeGenerator.hasMoreElements() && costLimit < cost)
     {
         auto range = rangeGenerator.getNextN(rangeSize);
         auto images = getImageDataBasedOnRange(*mTrainDb, range);
         auto labels = getImageClassBasedOnRange(*mTrainDb, range);
-        for (size_t i=0; i < 20 && cost > costLimit; ++i)
+        for (size_t i=0; i < 20 && costLimit < cost; ++i)
         {
             cost = mNetwork.train(images, labels);
             std::cout << "cost: " << cost << std::endl;
