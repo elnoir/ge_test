@@ -81,7 +81,6 @@ bool SyncController::startTest()
     }
     std::cout << confusion.toString() << std::endl;
 
-
     return true;
 }
 

@@ -18,7 +18,7 @@ Layer::Layer(size_t inputRowCount, size_t outputRowCount, layerFx forwardFunc, l
     std::mt19937 generator{rd()};
     std::normal_distribution<float> distribution{0.0f, 1.0f};
 
-    const auto div = std::sqrtf(static_cast<float>(outputRowCount));
+    const auto div = std::sqrtf(static_cast<float>(inputRowCount / 2));
     boost::for_each(mWeights, [&generator, &distribution, &div](float &value) {
         value = distribution(generator) / div;
     });
@@ -28,11 +28,8 @@ Layer::Layer(size_t inputRowCount, size_t outputRowCount, layerFx forwardFunc, l
 math::MatrixF Layer::feedForward(const math::MatrixF &inputData)
 {
     mInput = inputData;
-    //mWeights.DumpInfo("W");
     mZ = (mWeights * mInput).addColumnVector(mBias);
-    //mZ.DumpInfo("Z");
     mActivation = mForwardFunc(mZ);
-    //mActivation.DumpInfo("A");
     return mActivation;
 }
 
@@ -61,7 +58,7 @@ math::MatrixF Layer::calculateGradients(const math::MatrixF& prevDz)
 void Layer::applyGradients(float learnSpeed)
 {
     mWeights = mWeights - (learnSpeed * mWeightDelta);
-    //mBias = mBias - (learnSpeed * mBiasDelta);
+    mBias = mBias - (learnSpeed * mBiasDelta);
 }
 
 }
