@@ -350,6 +350,17 @@ math::Matrix<T> make_matrix(const size_t rowCount, const size_t columnCount)
     return result;
 }
 
+template<typename T>
+math::Matrix<T> make_unity_matrix(const size_t rowCount)
+{
+    auto result = make_matrix<T>(rowCount, rowCount);
+    for (size_t i=0; i<rowCount; ++i)
+    {
+        result.set(i, i, static_cast<T>(1));
+    }
+    return result;
+}
+
 using MatrixF = Matrix<float>;
 
 template<typename T>

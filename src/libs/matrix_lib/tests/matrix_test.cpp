@@ -5,15 +5,29 @@
 namespace {
     using MatrixF = math::MatrixF;
 
-    /**
-     * Basic initialization test with getters and setters
-    */
-    TEST(MatrixTests, InitializationTest)
+    TEST(MatrixTests, Unity)
     {
         MatrixF UnityMatrix = {
             {1.0, 0.0},
             {0.0, 1.0}
         };
+
+        auto result = math::make_unity_matrix<float>(2);
+
+        ASSERT_EQ(UnityMatrix.get(0, 0), result.get(0, 0));
+        ASSERT_EQ(UnityMatrix.get(0, 1), result.get(0, 1));
+        ASSERT_EQ(UnityMatrix.get(1, 0), result.get(1, 0));
+        ASSERT_EQ(UnityMatrix.get(1, 1), result.get(1, 1));
+
+        ASSERT_TRUE(result == UnityMatrix);
+    }
+
+    /**
+     * Basic initialization test with getters and setters
+    */
+    TEST(MatrixTests, InitializationTest)
+    {
+        auto UnityMatrix = math::make_unity_matrix<float>(2);
 
         ASSERT_EQ(UnityMatrix.get(0, 0), 1.0f);
         ASSERT_EQ(UnityMatrix.get(0, 1), 0.0f);
@@ -41,10 +55,7 @@ namespace {
 
     TEST(MatrixTests, BasicOperatorTest)
     {
-        MatrixF UnityMatrix = {
-            {1.0, 0.0},
-            {0.0, 1.0}
-        };
+        auto UnityMatrix = math::make_unity_matrix<float>(2);
 
         MatrixF OtherMatrix = {
             {0.0, 1.0},
@@ -170,10 +181,7 @@ namespace {
 
     TEST(MatrixTests, Transpose)
     {
-        const MatrixF UnityMatrix = {
-            {1.0f, 0.0f},
-            {0.0f, 1.0f}
-        };
+        const auto UnityMatrix = math::make_unity_matrix<float>(2);
 
         ASSERT_TRUE(UnityMatrix == UnityMatrix.transpose());
 
