@@ -5,6 +5,28 @@
     "version": "0.2.0",
     "configurations": [
     {
+        "name": "Sync test app Launch",
+        "type": "cppvsdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/bin/sync_test_app.exe",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false
+    },
+    {
+        "name": "Ann_test Launch",
+        "type": "cppvsdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/bin/ann_test.exe",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false
+    },
+    {
         "name": "MinstDB check",
         "type": "cppvsdbg",
         "request": "launch",
