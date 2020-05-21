@@ -10,7 +10,10 @@
 #include <boost/range/algorithm_ext/push_back.hpp>
 #include <boost/range/algorithm/equal.hpp>
 #include <boost/range/algorithm/transform.hpp>
+#include <boost/algorithm/minmax_element.hpp>
+#include <iostream>
 #include <boost/assert.hpp>
+#include <iomanip>
 
 #include <matrix/matrix_iterators.h>
 
@@ -89,7 +92,7 @@ public:
     // size related
     self_type& resize(size_t nRow, size_t nColumn)
     {
-        mData.resize(nRow * nColumn);
+        mData.resize(nRow * nColumn, static_cast<element_type>(0));
         mColumnCount = nColumn;
         mRowCount = nRow;
         mData.shrink_to_fit();
@@ -222,8 +225,29 @@ public:
         {
             for (auto j = 0; j < mColumnCount; ++j)
             {
-                result.set(i, j, get(i,j) + rhs.get(i, 1));
+                result.set(i, j, get(i,j) + rhs.get(i, 0));
             }
+        }
+        return result;
+    }
+
+    self_type hadamardProduct(const self_type &rhs) const
+    {
+        BOOST_ASSERT(mRowCount == rhs.mRowCount && mColumnCount == rhs.mColumnCount);
+        auto result = math::make_matrix<element_type>(rhs.mRowCount, rhs.mColumnCount);
+        std::transform(cBegin(), cEnd(), rhs.cBegin(), result.begin(), std::multiplies<float>());
+        return result;
+    }
+
+    self_type divideWithRow(const self_type rhs) const
+    {
+        BOOST_ASSERT(rhs.getRowCount() == 1 && rhs.getColumnCount() == mColumnCount);
+        auto result = math::make_matrix<element_type>(mRowCount, mColumnCount);
+        for (size_t i=0; i < mRowCount; ++i)
+        {
+            std::transform(cRowBegin(i), cRowEnd(i), rhs.cRowBegin(0), result.rowBegin(i), [](float left, float right) {
+                return left / right;
+            });
         }
         return result;
     }
@@ -309,6 +333,13 @@ public:
             return val / external_value;
         });
     }
+
+    void DumpInfo(const std::string &name)
+    {
+        auto result = boost::minmax_element(mData.cbegin(), mData.cend());
+        std::cout << std::setprecision(std::numeric_limits<float>::digits10 + 1);
+        std::cout << name << '['<< getRowCount() << 'x' << getColumnCount() << "] " << std::setw(8) << std::fixed << *(result.first) << "/" << *(result.second) << std::endl;
+    }
 };
 
 template<typename T>
@@ -340,12 +371,25 @@ Matrix<T> columnSum(const Matrix<T>& in)
 }
 
 template<typename T>
+Matrix<T> rowSum(const Matrix<T>& in)
+{
+    auto result = make_matrix<T>(in.getRowCount(), 1);
+    for (size_t i = 0; i < in.getRowCount(); ++i)
+    {
+        auto sum = std::accumulate(in.cRowBegin(i), in.cRowEnd(i), static_cast<T>(0));
+        result.set(i, 0, sum);
+    }
+    return result;
+}
+
+template<typename T>
 Matrix<T> softMax(const Matrix<T>& in)
 {
     using c_ptr_t = float(__cdecl *)(float);
     c_ptr_t expf = std::expf;
-    auto r = in.apply(expf);
-    return  r / sum(r);
+    const auto r = in.apply(expf);
+    const auto s = columnSum(r);
+    auto result = r.divideWithRow(s);
+    return  result;
 }
-
 }
