@@ -10,7 +10,7 @@ TEST(ShuffleTest, Elements)
 
     std::set<size_t> elementCheck;
 
-    for (int i=0; i < 13; ++i)
+    for (int i=0; range.hasMoreElements(); ++i)
     {
         auto newRange = range.getNextN(10);
         ASSERT_TRUE(newRange.size() <= 10);
