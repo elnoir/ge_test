@@ -13,7 +13,8 @@ private:
 public:
     ShuffledRange(size_t rangeEnd);
     void shuffle();
-    IndexedRange getNextN(size_t nextRangeSize, bool autoRestart = false);
+    IndexedRange getNextN(size_t nextRangeSize);
+    bool hasMoreElements() const;
 };
 
 }

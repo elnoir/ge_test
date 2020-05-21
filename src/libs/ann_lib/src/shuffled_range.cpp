@@ -18,7 +18,7 @@ namespace ann
         mLastElement = mRange.begin();
     }
 
-    ShuffledRange::IndexedRange ShuffledRange::getNextN(size_t nextRangeSize, bool autoRestart /*= false*/)
+    ShuffledRange::IndexedRange ShuffledRange::getNextN(size_t nextRangeSize)
     {
         ShuffledRange::IndexedRange result(nextRangeSize);
 
@@ -27,20 +27,18 @@ namespace ann
         {
             if (mLastElement == mRange.cend())
             {
-                if (autoRestart)
-                {
-                    mLastElement = mRange.cbegin();
-                }
-                else
-                {
-                    result.erase(it, result.end());
-                    break;
-                }
+                result.erase(it, result.end());
+                break;
             }
             *it = *mLastElement;
             ++it;
             ++mLastElement;
         }
         return result;
+    }
+
+    bool ShuffledRange::hasMoreElements() const
+    {
+        return mLastElement != mRange.end();
     }
 }
