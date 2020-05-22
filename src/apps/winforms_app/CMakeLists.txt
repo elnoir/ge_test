@@ -6,8 +6,10 @@ add_executable(wpf_test
 src/app.ico
 src/app.rc
 src/AssemblyInfo.cpp
+src/MainWindow.h
 src/MainWindow.cpp
 src/main.cpp
+src/pch.h
 src/pch.cpp
 src/pch.h
 src/Resource.h
