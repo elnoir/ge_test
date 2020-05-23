@@ -37,7 +37,7 @@ bool SyncController::startTraining()
         auto range = rangeGenerator.getNextN(rangeSize);
         auto images = getImageDataBasedOnRange(*mTrainDb, range);
         auto labels = getImageClassBasedOnRange(*mTrainDb, range);
-        for (size_t i=0; i < 20 && costLimit < cost; ++i)
+        for (size_t i=0; i < 15 && costLimit < cost; ++i)
         {
             cost = mNetwork.train(images, labels);
             std::cout << "cost: " << cost << std::endl;
