@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
     {
+        "name": "WPF Launch",
+        "type": "cppvsdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/bin/wpf_test.exe",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false
+    },
+    {
         "name": "Sync test app Launch",
         "type": "cppvsdbg",
         "request": "launch",
