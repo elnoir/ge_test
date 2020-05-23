@@ -5,7 +5,7 @@
 #include <matrix/confusion_matrix.h>
 
 
-namespace ann {
+namespace ann { namespace sync {
 
 bool SyncController::setTrainDb(db::DBInterfacePtr dbPtr)
 {
@@ -89,4 +89,9 @@ bool SyncController::stopTest()
     return true;
 }
 
+ann::IANNController::Status SyncController::getStatus()
+{
+    return IANNController::Status::NONE;
 }
+
+} } // namespace

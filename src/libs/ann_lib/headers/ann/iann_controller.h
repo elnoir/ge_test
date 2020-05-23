@@ -11,6 +11,17 @@ enum class ControllerType {
 class IANNController
 {
 public:
+    enum class Status {
+        NONE,
+        EMPTY,
+        CONFIGURED,
+        TRAINING_IN_PROGRESS,
+        TRAINING_PAUSED,
+        TRAINING_DONE,
+        TESTING,
+        TEST_FINISHED
+    };
+
     virtual bool setTrainDb(db::DBInterfacePtr dbPtr) = 0;
     virtual bool setTestDb(db::DBInterfacePtr dbPtr) = 0;
 
@@ -20,6 +31,8 @@ public:
 
     virtual bool startTest() = 0;
     virtual bool stopTest() = 0;
+
+    virtual ann::IANNController::Status getStatus() = 0;
 
     virtual ~IANNController() = default;
 };

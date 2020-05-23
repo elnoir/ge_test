@@ -1,7 +1,7 @@
 #include <ann/iann_controller.h>
 #include "ann.h"
 
-namespace ann {
+namespace ann { namespace sync {
 
 class SyncController
     : public IANNController
@@ -20,10 +20,11 @@ public:
 
     bool startTest() override;
     bool stopTest() override;
+    ann::IANNController::Status getStatus() override;
 
     virtual ~SyncController() = default;
 };
 
 
 
-}
+} } // namespace

@@ -12,7 +12,7 @@ IANNControllerPtr createController(ControllerType t)
     switch (t)
     {
     case ControllerType::SYNC:
-        result.reset(new SyncController());
+        result.reset(new sync::SyncController());
         break;
 
     case ControllerType::ASYNC:
