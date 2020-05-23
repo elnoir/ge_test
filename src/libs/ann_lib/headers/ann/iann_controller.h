@@ -25,6 +25,8 @@ public:
     virtual bool setTrainDb(db::DBInterfacePtr dbPtr) = 0;
     virtual bool setTestDb(db::DBInterfacePtr dbPtr) = 0;
 
+    virtual bool configureNetwork() =0;
+
     virtual bool startTraining() = 0;
     virtual bool pauseTraining() = 0;
     virtual bool stopTraining() = 0;

@@ -8,11 +8,12 @@ class SyncController
 {
     db::DBInterfacePtr mTrainDb;
     db::DBInterfacePtr mTestDb;
-    ANN mNetwork;
+    std::unique_ptr<ANN> mNetwork;
 
 public:
     bool setTrainDb(db::DBInterfacePtr dbPtr) override;
     bool setTestDb(db::DBInterfacePtr dbPtr) override;
+    bool configureNetwork() override;
 
     bool startTraining() override;
     bool pauseTraining() override;

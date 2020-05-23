@@ -13,9 +13,7 @@ int main(int argc, char* params[])
 
     controller->setTrainDb(std::move(db));
     controller->setTestDb(std::move(testDb));
+    controller->configureNetwork();
     controller->startTraining();
     controller->startTest();
-
-
-
 }

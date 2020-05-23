@@ -21,13 +21,21 @@ bool SyncController::setTestDb(db::DBInterfacePtr dbPtr)
     return true;
 }
 
+bool SyncController::configureNetwork()
+{
+    BOOST_ASSERT(mTrainDb->isDbLoaded());
+    mNetwork = std::make_unique<ANN>();
+    mNetwork->configureNetwork(mTrainDb->getPixelCount());
+    return true;
+}
+
 bool SyncController::startTraining()
 {
+    BOOST_ASSERT(mNetwork);
+
     const size_t rangeSize = 50;
     const auto costLimit = 0.03f;
 
-    BOOST_ASSERT(mTrainDb->isDbLoaded());
-    mNetwork.configureNetwork(mTrainDb->getPixelCount());
     ShuffledRange rangeGenerator(mTrainDb->getImageCount());
     size_t trainCount = 0;
 
@@ -39,7 +47,7 @@ bool SyncController::startTraining()
         auto labels = getImageClassBasedOnRange(*mTrainDb, range);
         for (size_t i=0; i < 15 && costLimit < cost; ++i)
         {
-            cost = mNetwork.train(images, labels);
+            cost = mNetwork->train(images, labels);
             std::cout << "cost: " << cost << std::endl;
         }
         trainCount += rangeSize;
@@ -62,6 +70,7 @@ bool SyncController::stopTraining()
 
 bool SyncController::startTest()
 {
+    BOOST_ASSERT(mNetwork);
     const size_t rangeSize = 1000;
     const size_t batchSize = 50;
 
@@ -75,7 +84,7 @@ bool SyncController::startTest()
         auto images = getImageDataBasedOnRange(*mTestDb, range);
         auto labels = getImageClassBasedOnRange(*mTestDb, range);
 
-        const auto& result = mNetwork.test(images);
+        const auto& result = mNetwork->test(images);
         confusion.update(result, labels);
         std::cout << "tested on: " << i << std::endl;
     }
