@@ -45,7 +45,7 @@ void AsyncLoop::Run()
     while (mInternalState != InternalState::QUIT)
     {
         // get command
-        auto result = mIncomingQueue->getCommand();
+        auto result = mIncomingQueue->getCommand(mInternalState == InternalState::IDLE);
         if (result)
         {
             switch (result->mCommand)

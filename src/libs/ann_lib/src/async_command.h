@@ -21,7 +21,7 @@ struct AsyncCommand
 template<typename T>
 class CommandQueue
 {
-    using lock = std::lock_guard<std::mutex>;
+    using lock = std::unique_lock<std::mutex>;
 public:
     using commandType = AsyncCommand<T>;
     using optCommandType = boost::optional<commandType>;
@@ -29,18 +29,28 @@ public:
 private:
     std::mutex mMutex;
     std::deque<commandType> mData;
+    std::condition_variable mCv;
 
 public:
 
     void pushCommand(commandType command)
     {
-        const lock l(mMutex);
-        mData.push_back(std::move(command));
+        {
+            const lock l(mMutex);
+            mData.push_back(std::move(command));
+        }
+        mCv.notify_one();
     }
 
-    optCommandType getCommand()
+    optCommandType getCommand(bool waitForOne = false)
     {
-        const lock l(mMutex);
+        lock l(mMutex);
+        if (waitForOne)
+        {
+            mCv.wait(l, [this]() {
+                return mData.size() > 0;
+            });
+        }
         if (mData.size() > 0)
         {
             commandType result = mData.front();
