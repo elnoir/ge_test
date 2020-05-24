@@ -6,7 +6,7 @@
 
 namespace ann { namespace async {
 
-class AsynController
+class AsyncController
     : public IANNController
 {
     SharedDbPtr mTrainDb;
@@ -31,7 +31,7 @@ public:
 
     ann::IANNController::Status getStatus() override;
 
-    virtual ~AsynController()
+    virtual ~AsyncController()
     {
         if (mAnnThread.joinable())
         {

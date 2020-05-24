@@ -1,4 +1,5 @@
 #pragma once
+#include "AsyncWrapper.h"
 
 namespace annWinForm {
 
@@ -14,7 +15,8 @@ namespace annWinForm {
 	public:
 		MainWindow(void)
 		{
-			InitializeComponent();
+ 			InitializeComponent();
+			mWrapper = gcnew AsyncWrapper();
 		}
 
 	protected:
@@ -27,6 +29,7 @@ namespace annWinForm {
 		}
 
 	private:
+		AsyncWrapper^ mWrapper;
 		System::ComponentModel::Container ^components;
 
 	private: System::Windows::Forms::Button^ cTrainImageBrowse;

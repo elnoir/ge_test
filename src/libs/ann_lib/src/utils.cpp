@@ -1,5 +1,6 @@
 #include "ann/iann_controller.h"
 #include "sync_controller.h"
+#include "async_controller.h"
 #include "shuffled_range.h"
 #include <boost/range/algorithm/copy.hpp>
 #include "utils.h"
@@ -16,6 +17,7 @@ IANNControllerPtr createController(ControllerType t)
         break;
 
     case ControllerType::ASYNC:
+        result.reset(new async::AsyncController());
         break;
     }
 

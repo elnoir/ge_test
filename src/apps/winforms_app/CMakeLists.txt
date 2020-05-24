@@ -13,6 +13,8 @@ src/pch.h
 src/pch.cpp
 src/pch.h
 src/Resource.h
+src/AsyncWrapper.h
+src/AsyncWrapper.cpp
 )
 
 LIST(APPEND DOTNET_REFS "System")
@@ -25,5 +27,7 @@ LIST(APPEND DOTNET_REFS "System.Xml")
 set_target_properties(wpf_test PROPERTIES
     COMMON_LANGUAGE_RUNTIME ""
     VS_DOTNET_REFERENCES "${DOTNET_REFS}"
-
 )
+
+target_link_libraries(wpf_test PRIVATE ann minstdb)
+

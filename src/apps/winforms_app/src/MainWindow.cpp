@@ -37,18 +37,24 @@ inline System::Void MainWindow::cTestLabelBrowse_Click(System::Object^ sender, S
 
 
 inline System::Void MainWindow::cConfigureNetwork_Click(System::Object^ sender, System::EventArgs^ e) {
+    mWrapper->setDb(cTrainImagePathBox->Text, cTrainLabelPathBox->Text, cTestImagePathBox->Text, cTestLabelPathBox->Text);
+    mWrapper->configureNetwork();
 }
 
 inline System::Void MainWindow::cStartTraining_Click(System::Object^ sender, System::EventArgs^ e) {
+    mWrapper->startTraining();
 }
 
 inline System::Void MainWindow::cPauseTraining_Click(System::Object^ sender, System::EventArgs^ e) {
+    mWrapper->stopTraining();
 }
 
 inline System::Void MainWindow::cStopTraining_Click(System::Object^ sender, System::EventArgs^ e) {
+    mWrapper->stopTraining();
 }
 
 inline System::Void MainWindow::cStartTesting_Click(System::Object^ sender, System::EventArgs^ e) {
+    mWrapper->startTest();
 }
 
 }

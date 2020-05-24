@@ -11,21 +11,21 @@ namespace ann{ namespace async {
     }
 
 
-    bool AsynController::setTrainDb(db::DBInterfacePtr dbPtr)
+    bool AsyncController::setTrainDb(db::DBInterfacePtr dbPtr)
     {
         BOOST_ASSERT(dbPtr->isDbLoaded());
         mTrainDb = std::move(dbPtr);
         return true;
     }
 
-    bool AsynController::setTestDb(db::DBInterfacePtr dbPtr)
+    bool AsyncController::setTestDb(db::DBInterfacePtr dbPtr)
     {
         BOOST_ASSERT(dbPtr->isDbLoaded());
         mTestDb = std::move(dbPtr);
         return true;
     }
 
-    bool AsynController::configureNetwork()
+    bool AsyncController::configureNetwork()
     {
         BOOST_ASSERT(mTestDb && mTestDb->isDbLoaded());
         BOOST_ASSERT(mTrainDb && mTrainDb->isDbLoaded());
@@ -41,37 +41,37 @@ namespace ann{ namespace async {
         return isDbOk;
     }
 
-    bool AsynController::startTraining()
+    bool AsyncController::startTraining()
     {
         mThreadQueue->pushCommand({commandToThread::START_TRAINING, {}});
         return true;
     }
 
-    bool AsynController::pauseTraining()
+    bool AsyncController::pauseTraining()
     {
         mThreadQueue->pushCommand({commandToThread::GO_IDLE, {}});
         return true;
     }
 
-    bool AsynController::stopTraining()
+    bool AsyncController::stopTraining()
     {
         mThreadQueue->pushCommand({commandToThread::GO_IDLE, {}});
         return true;
     }
 
-    bool AsynController::startTest()
+    bool AsyncController::startTest()
     {
         mThreadQueue->pushCommand({commandToThread::START_TESTING, {}});
         return true;
     }
 
-    bool AsynController::stopTest()
+    bool AsyncController::stopTest()
     {
         mThreadQueue->pushCommand({commandToThread::GO_IDLE, {}});
         return true;
     }
 
-    ann::IANNController::Status AsynController::getStatus()
+    ann::IANNController::Status AsyncController::getStatus()
     {
         return ann::IANNController::Status::EMPTY;
     }
