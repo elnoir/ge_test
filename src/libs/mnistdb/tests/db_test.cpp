@@ -1,5 +1,6 @@
 #include "db_test.h"
 #include "db/idb.h"
+#include <boost/filesystem.hpp>
 
 
 namespace db_test {
@@ -59,7 +60,7 @@ TEST(DBTests, ReadFromFile)
     }
 
     auto db = db::createDB();
-    auto result = db->loadDB(imagePath, labelPath);
+    auto result = db->loadDB(imagePath.generic_string(), labelPath.generic_string());
 
     EXPECT_TRUE(result);
     EXPECT_TRUE(db->isDbLoaded());
@@ -76,7 +77,7 @@ TEST(DBTests, NoPathFound)
     boost::filesystem::path labelPath = "non_existing_label.dat";
 
     auto db = db::createDB();
-    auto result = db->loadDB(imagePath, labelPath);
+    auto result = db->loadDB(imagePath.generic_string(), labelPath.generic_string());
 
     ASSERT_FALSE(result);
     ASSERT_FALSE(db->isDbLoaded());

@@ -1,5 +1,6 @@
 #include "db.h"
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/endian/conversion.hpp>
 
 
@@ -104,7 +105,7 @@ bool loadFileIntoBuffer(const boost::filesystem::path &path, buffer &dataBuffer)
 }
 
 
-bool DB::loadDB(const boost::filesystem::path& imageFilePath, const boost::filesystem::path& imageIndexPath)
+bool DB::loadDB(const std::string& imageFilePath, const std::string& imageIndexPath)
 {
     auto imagePtr = std::make_unique<db::ImageContainer>();
     const auto imageFileOk = loadFileIntoBuffer(imageFilePath, imagePtr->mFileBuffer) && imagePtr->parseBuffer();

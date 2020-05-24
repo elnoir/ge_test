@@ -47,7 +47,7 @@ public:
     DB(const DB &other) = delete;
     DB(DB && other) = delete;
 
-    bool loadDB(const boost::filesystem::path& imageFilePath, const boost::filesystem::path& lableFilePath) override;
+    bool loadDB(const std::string& imageFilePath, const std::string& lableFilePath) override;
     bool isDbLoaded() const override;
     size_t getImageCount() const override;
     size_t getPixelCount() const override;

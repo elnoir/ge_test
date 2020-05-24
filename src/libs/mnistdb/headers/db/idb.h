@@ -1,7 +1,8 @@
 #pragma once
 
+#include <string>
 #include <matrix/matrix.h>
-#include <boost/filesystem.hpp>
+
 
 namespace db {
 
@@ -9,7 +10,7 @@ class DBInterface
 {
 public:
     DBInterface() = default;
-    virtual bool loadDB(const boost::filesystem::path& imageFilePath, const boost::filesystem::path &imageIndexPath ) = 0;
+    virtual bool loadDB(const std::string &imageFilePath, const std::string &imageIndexPath ) = 0;
     virtual bool isDbLoaded() const = 0;
     virtual size_t getImageCount() const = 0;
     virtual math::MatrixF getImageMatrix(size_t index) const = 0;
