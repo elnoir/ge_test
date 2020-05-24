@@ -5,6 +5,8 @@ add_library(ann STATIC
     src/utils.h
     src/utils.cpp
     src/shuffled_range.cpp
+    src/async_controller.cpp
+    src/async_loop.cpp
 )
 
 target_include_directories(ann PUBLIC headers)
