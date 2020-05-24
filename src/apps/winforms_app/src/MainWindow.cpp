@@ -37,8 +37,20 @@ inline System::Void MainWindow::cTestLabelBrowse_Click(System::Object^ sender, S
 
 
 inline System::Void MainWindow::cConfigureNetwork_Click(System::Object^ sender, System::EventArgs^ e) {
-    mWrapper->setDb(cTrainImagePathBox->Text, cTrainLabelPathBox->Text, cTestImagePathBox->Text, cTestLabelPathBox->Text);
-    mWrapper->configureNetwork();
+    auto dbResult = mWrapper->setDb(cTrainImagePathBox->Text, cTrainLabelPathBox->Text, cTestImagePathBox->Text, cTestLabelPathBox->Text);
+    if (dbResult)
+    {
+        mWrapper->configureNetwork();
+    }
+    else
+    {
+        String^ message = gcnew String("Unable to load data from the files, please check if the path or the files are correct.");
+        String^ caption = gcnew String("Error");
+
+        System::Windows::Forms::MessageBoxButtons buttons = System::Windows::Forms::MessageBoxButtons::OK;
+
+        System::Windows::Forms::MessageBox::Show(message, caption, buttons);
+    }
 }
 
 inline System::Void MainWindow::cStartTraining_Click(System::Object^ sender, System::EventArgs^ e) {
