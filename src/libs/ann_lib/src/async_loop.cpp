@@ -42,6 +42,8 @@ void AsyncLoop::Run()
     std::unique_ptr<TrainState> trainState;
     std::unique_ptr<TestState> testState;
 
+    std::cout << "starting message loop on the background thread" << std::endl;
+
     while (mInternalState != InternalState::QUIT)
     {
         // get command
@@ -101,6 +103,7 @@ void AsyncLoop::Run()
             }
         }
     }
+    std::cout << "worker thread finished" << std::endl;
 }
 
 
@@ -118,13 +121,13 @@ ShuffledRange::IndexedRange generateNewRange(ShuffledRange &generator, size_t co
 void AsyncLoop::nextTrainStep(ann::IANN &network, TrainState& state)
 {
     const size_t iterLimit = 15;
-    const size_t imageCount = 50;
+    const size_t batchSize = 50;
 
     if ((state.mCurrentIteration % iterLimit) == 0)
     {
         std::cout << state.mCurrentIteration<< ": " << state.mLastLoss << std::endl;
 
-        state.mCurrentRange = generateNewRange(*state.mRangeGenerator, imageCount);
+        state.mCurrentRange = generateNewRange(*state.mRangeGenerator, batchSize);
         state.mImages = getImageDataBasedOnRange(*mTrainDb, state.mCurrentRange);
         state.mLabels = getImageClassBasedOnRange(*mTrainDb, state.mCurrentRange);
     }
