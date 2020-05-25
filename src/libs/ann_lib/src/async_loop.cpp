@@ -6,6 +6,8 @@
 
 namespace ann { namespace async {
 
+ThreadCommandQueue::message::buffer serializeConfusionMatrix(math::ConfusionMatrix::internalMatrix &matrix);
+
 
 struct TrainState
 {
@@ -96,6 +98,14 @@ void AsyncLoop::Run()
                             mNetworkState = NetworkState::NONE;
                             mInternalState = InternalState::IDLE;
                             std::cout << testState->mConfusionMatrix.toString() << std::endl;
+
+                            MainCommandQueue::message message {
+                                commandToMain::TESTING_FINISHED,
+                                serializeConfusionMatrix(testState->mConfusionMatrix.getMatrix())
+                            };
+
+                            mResultQueue->pushCommand(message);
+
                         }
                     }
                     break;
@@ -104,6 +114,23 @@ void AsyncLoop::Run()
         }
     }
     std::cout << "worker thread finished" << std::endl;
+}
+
+ThreadCommandQueue::message::buffer serializeConfusionMatrix(math::ConfusionMatrix::internalMatrix &matrix)
+{
+    ThreadCommandQueue::message::buffer result;
+    const uint32_t rowCount = static_cast<uint32_t>(matrix.getRowCount());
+    result.resize(1 + (rowCount * rowCount));
+
+    auto offset = result.data();
+    std::memcpy(offset, &rowCount, sizeof(uint32_t));
+    offset += sizeof(uint32_t);
+    for (auto value : matrix)
+    {
+        std::memcpy(offset, &static_cast<uint32_t>(value), sizeof(uint32_t));
+        offset += sizeof(uint32_t);
+    }
+    return result;
 }
 
 

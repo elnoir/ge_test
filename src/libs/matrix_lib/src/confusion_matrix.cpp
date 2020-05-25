@@ -44,4 +44,10 @@ namespace math
         }
         return out.str();
     }
+
+    ConfusionMatrix::internalMatrix ConfusionMatrix::getMatrix() const
+    {
+        return mData;
+    }
+
 }
