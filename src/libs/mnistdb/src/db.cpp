@@ -15,13 +15,13 @@ bool ImageContainer::parseBuffer()
         auto srcPtr = mFileBuffer.data();
         int offset = 0;
 
-        memcpy(&mMagic, srcPtr + offset, sizeof(mMagic));
+        std::memcpy(&mMagic, srcPtr + offset, sizeof(mMagic));
         offset += sizeof(mMagic);
-        memcpy(&mCount, srcPtr + offset, sizeof(mCount));
+        std::memcpy(&mCount, srcPtr + offset, sizeof(mCount));
         offset += sizeof(mCount);
-        memcpy(&mWidth, srcPtr + offset, sizeof(mWidth));
+        std::memcpy(&mWidth, srcPtr + offset, sizeof(mWidth));
         offset += sizeof(mWidth);
-        memcpy(&mHeight, srcPtr + offset, sizeof(mHeight));
+        std::memcpy(&mHeight, srcPtr + offset, sizeof(mHeight));
         offset += sizeof(mHeight);
 
         mMagic = boost::endian::big_to_native(mMagic);
@@ -62,9 +62,9 @@ bool ImageIndexContainer::parseBuffer()
         auto srcPtr = mFileBuffer.data();
         int offset = 0;
 
-        memcpy(&mMagic, srcPtr + offset, sizeof(mMagic));
+        std::memcpy(&mMagic, srcPtr + offset, sizeof(mMagic));
         offset += sizeof(mMagic);
-        memcpy(&mCount, srcPtr + offset, sizeof(mCount));
+        std::memcpy(&mCount, srcPtr + offset, sizeof(mCount));
         offset += sizeof(mCount);
 
         mMagic = boost::endian::big_to_native(mMagic);

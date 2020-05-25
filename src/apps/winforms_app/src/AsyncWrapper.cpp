@@ -95,7 +95,7 @@ void AsyncWrapper::checkMessage(void)
 int deserializeImageCount(const ann::async::MainMessage::buffer &buffer)
 {
     int32_t data;
-    memcpy(&data, buffer.data(), sizeof(uint32_t));
+    std::memcpy(&data, buffer.data(), sizeof(uint32_t));
     return data;
 }
 
@@ -105,7 +105,7 @@ ManagedConfusionMatrix deserializeConfusionMatrix(const ann::async::MainMessage:
     uint32_t rowCount = 0;
     auto offset = buffer.data();
 
-    memcpy(&rowCount, offset, sizeof(rowCount));
+    std::memcpy(&rowCount, offset, sizeof(rowCount));
     offset += sizeof(rowCount);
 
     ManagedConfusionMatrix result = gcnew array<array< Int32 >^>(rowCount);
@@ -115,7 +115,7 @@ ManagedConfusionMatrix deserializeConfusionMatrix(const ann::async::MainMessage:
         for (uint32_t j = 0; j < rowCount; ++j)
         {
             uint32_t data;
-            memcpy(&data, offset, sizeof(data));
+            std::memcpy(&data, offset, sizeof(data));
             offset += sizeof(data);
             result[i][j] = data;
         }
