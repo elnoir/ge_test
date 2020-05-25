@@ -17,6 +17,9 @@ namespace annWinForm {
 		{
  			InitializeComponent();
 			mWrapper = gcnew AsyncWrapper();
+			mWrapper->OnConfusionMatrixArrived += gcnew confusionMatrixArrived(this, &MainWindow::OnConfusionMatrixArrived);
+			mTimer->Interval = 100;
+			mTimer->Tick += gcnew EventHandler(this, &MainWindow::TimerEventProcessor);
 		}
 
 	protected:
@@ -28,8 +31,12 @@ namespace annWinForm {
 			}
 		}
 
+		
+
 	private:
 		AsyncWrapper^ mWrapper;
+		System::Windows::Forms::Timer^ mTimer = gcnew System::Windows::Forms::Timer();
+
 		System::ComponentModel::Container ^components;
 
 	private: System::Windows::Forms::Button^ cTrainImageBrowse;
@@ -52,6 +59,9 @@ namespace annWinForm {
 	private: System::Windows::Forms::Button^ cPauseTraining;
 	private: System::Windows::Forms::Button^ cStopTraining;
 	private: System::Windows::Forms::Button^ cStartTesting;
+	private: System::Windows::Forms::DataGridView^ cConfMatrix;
+
+
 
 #pragma region Windows Form Designer generated code
 		void InitializeComponent(void)
@@ -73,6 +83,8 @@ namespace annWinForm {
 			this->cPauseTraining = (gcnew System::Windows::Forms::Button());
 			this->cStopTraining = (gcnew System::Windows::Forms::Button());
 			this->cStartTesting = (gcnew System::Windows::Forms::Button());
+			this->cConfMatrix = (gcnew System::Windows::Forms::DataGridView());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cConfMatrix))->BeginInit();
 			this->SuspendLayout();
 			//
 			// cTrainImageBrowse
@@ -228,12 +240,34 @@ namespace annWinForm {
 			this->cStartTesting->Text = L"Start Testing";
 			this->cStartTesting->UseVisualStyleBackColor = true;
 			this->cStartTesting->Click += gcnew System::EventHandler(this, &MainWindow::cStartTesting_Click);
+
+			//
+			// cConfMatrix
+			//
+			this->cConfMatrix->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
+			this->cConfMatrix->Location = System::Drawing::Point(24, 358);
+			this->cConfMatrix->Name = L"cConfMatrix";
+			this->cConfMatrix->RowHeadersWidth = 51;
+			this->cConfMatrix->RowTemplate->Height = 24;
+			this->cConfMatrix->Size = System::Drawing::Size(1050, 378);
+			this->cConfMatrix->AllowUserToAddRows = false;
+			this->cConfMatrix->AllowUserToDeleteRows = false;
+			this->cConfMatrix->ReadOnly = true;
+			this->cConfMatrix->TabIndex = 17;
+
+			for (Int32 i = 0; i < 10; ++i)
+			{
+				String ^val = System::Convert::ToString(i);
+				this->cConfMatrix->Columns->Add("label" + val, "l: " + val);
+
+			}
 			//
 			// MainWindow
 			//
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1132, 382);
+			this->ClientSize = System::Drawing::Size(1132, 879);
+			this->Controls->Add(this->cConfMatrix);
 			this->Controls->Add(this->cStartTesting);
 			this->Controls->Add(this->cStopTraining);
 			this->Controls->Add(this->cPauseTraining);
@@ -254,6 +288,8 @@ namespace annWinForm {
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cConfMatrix))->EndInit();
+
 			this->components = gcnew System::ComponentModel::Container();
 			this->Text = L"Main Window";
 			this->Padding = System::Windows::Forms::Padding(0);
@@ -270,6 +306,8 @@ namespace annWinForm {
 	private: System::Void cStartTesting_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void cConfigureNetwork_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void cPauseTraining_Click(System::Object^ sender, System::EventArgs^ e);
+	private: void OnConfusionMatrixArrived(ManagedConfusionMatrix result);
+	private: Void TimerEventProcessor(Object^ myObject, EventArgs^ myEventArgs);
 
 	};
 }

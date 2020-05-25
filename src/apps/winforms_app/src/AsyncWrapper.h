@@ -4,8 +4,16 @@ namespace annWinForm {
 
 using ManagedConfusionMatrix = array<array<System::Int32>^>^ ;
 
-ref class AsyncWrapper{
+delegate void confusionMatrixArrived(ManagedConfusionMatrix);
 
+interface struct IWrapperEvents{
+    event confusionMatrixArrived^ OnConfusionMatrixArrived;
+
+};
+
+ref class AsyncWrapper
+    : public IWrapperEvents
+{
     ann::IANNController *mController;
 
 public:
@@ -30,6 +38,8 @@ public:
     {
         delete mController;
     }
+
+    virtual event confusionMatrixArrived^ OnConfusionMatrixArrived;
 };
 
 }

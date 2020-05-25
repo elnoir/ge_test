@@ -41,6 +41,7 @@ inline System::Void MainWindow::cConfigureNetwork_Click(System::Object^ sender, 
     if (dbResult)
     {
         mWrapper->configureNetwork();
+        mTimer->Enabled = true;
     }
     else
     {
@@ -59,6 +60,33 @@ inline System::Void MainWindow::cStartTraining_Click(System::Object^ sender, Sys
 
 inline System::Void MainWindow::cPauseTraining_Click(System::Object^ sender, System::EventArgs^ e) {
     mWrapper->stopTraining();
+}
+
+void MainWindow::OnConfusionMatrixArrived(ManagedConfusionMatrix result)
+{
+    cConfMatrix->Rows->Clear();
+    cConfMatrix->Rows->Add(10);
+    for(int i = 0; i < result->Length; ++i)
+    {
+        cConfMatrix->Rows[i]->HeaderCell->Value = System::Convert::ToString(i);
+        for (int j = 0; j < result[i]->Length; ++j)
+        {
+            cConfMatrix->Rows[i]->Cells[j]->Value = System::Convert::ToString(result[i][j]);
+            if (i == j)
+            {
+                cConfMatrix->Rows[i]->Cells[j]->Style->BackColor = System::Drawing::Color::DarkOliveGreen;
+            }
+            else if (result[i][j] > 0)
+            {
+                cConfMatrix->Rows[i]->Cells[j]->Style->BackColor = System::Drawing::Color::DarkOrange;
+            }
+        }
+    }
+}
+
+void MainWindow::TimerEventProcessor(Object^ myObject, EventArgs^ myEventArgs)
+{
+    mWrapper->checkMessage();
 }
 
 inline System::Void MainWindow::cStopTraining_Click(System::Object^ sender, System::EventArgs^ e) {

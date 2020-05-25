@@ -69,16 +69,16 @@ void AsyncWrapper::stopTest(void)
 void AsyncWrapper::checkMessage(void)
 {
     auto result = mController->getAsyncCommand();
-
-    if (result)
+    while (result)
     {
-        // ann::async::commandToMain
         switch (result->mCommand)
         {
-            case ann::async::commandToMain::TESTING_FINISHED:
+        case ann::async::commandToMain::TESTING_FINISHED:
             auto confusionMatrix = deserializeConfusionMatrix(result->mBuffer);
+            OnConfusionMatrixArrived(confusionMatrix);
             break;
         }
+        result = mController->getAsyncCommand();
     }
 }
 
