@@ -2,6 +2,8 @@
 
 namespace annWinForm {
 
+using ManagedConfusionMatrix = array<array<System::Int32>^>^ ;
+
 ref class AsyncWrapper{
 
     ann::IANNController *mController;
@@ -16,6 +18,8 @@ public:
     void stopTraining(void);
     void startTest(void);
     void stopTest(void);
+
+    void checkMessage(void);
 
     ~AsyncWrapper()
     {

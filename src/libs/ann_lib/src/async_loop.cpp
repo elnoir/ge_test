@@ -120,7 +120,7 @@ ThreadCommandQueue::message::buffer serializeConfusionMatrix(math::ConfusionMatr
 {
     ThreadCommandQueue::message::buffer result;
     const uint32_t rowCount = static_cast<uint32_t>(matrix.getRowCount());
-    result.resize(1 + (rowCount * rowCount));
+    result.resize(sizeof(rowCount) * (1 + rowCount * rowCount));
 
     auto offset = result.data();
     std::memcpy(offset, &rowCount, sizeof(uint32_t));

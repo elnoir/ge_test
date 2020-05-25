@@ -6,6 +6,10 @@
 namespace annWinForm
 {
 
+using namespace System;
+
+ManagedConfusionMatrix deserializeConfusionMatrix(const ann::async::MainMessage::buffer &buffer);
+
 
 AsyncWrapper::AsyncWrapper()
 {
@@ -62,6 +66,45 @@ void AsyncWrapper::stopTest(void)
     mController->stopTest();
 }
 
+void AsyncWrapper::checkMessage(void)
+{
+    auto result = mController->getAsyncCommand();
+
+    if (result)
+    {
+        // ann::async::commandToMain
+        switch (result->mCommand)
+        {
+            case ann::async::commandToMain::TESTING_FINISHED:
+            auto confusionMatrix = deserializeConfusionMatrix(result->mBuffer);
+            break;
+        }
+    }
+}
+
+
+ManagedConfusionMatrix deserializeConfusionMatrix(const ann::async::MainMessage::buffer &buffer)
+{
+    uint32_t rowCount = 0;
+    auto offset = buffer.data();
+
+    memcpy(&rowCount, offset, sizeof(rowCount));
+    offset += sizeof(rowCount);
+
+    ManagedConfusionMatrix result = gcnew array<array< Int32 >^>(rowCount);
+    for (uint32_t i = 0; i < rowCount; ++i)
+    {
+        result[i] = gcnew array< Int32 >(rowCount);
+        for (uint32_t j = 0; j < rowCount; ++j)
+        {
+            uint32_t data;
+            memcpy(&data, offset, sizeof(data));
+            offset += sizeof(data);
+            result[i][j] = data;
+        }
+    }
+    return result;
+}
 
 
 }
