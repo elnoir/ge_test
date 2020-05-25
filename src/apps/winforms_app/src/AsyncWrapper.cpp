@@ -9,7 +9,7 @@ namespace annWinForm
 
 AsyncWrapper::AsyncWrapper()
 {
-    this->mController = ann::createController(ann::ControllerType::ASYNC).release();
+    mController = ann::createController(ann::ControllerType::ASYNC).release();
 }
 
 bool AsyncWrapper::setDb(System::String^ trainImage, System::String^ trainLabel, System::String^ testImage, System::String^ testLabel)
