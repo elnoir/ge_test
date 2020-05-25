@@ -18,6 +18,7 @@ namespace annWinForm {
  			InitializeComponent();
 			mWrapper = gcnew AsyncWrapper();
 			mWrapper->OnConfusionMatrixArrived += gcnew confusionMatrixArrived(this, &MainWindow::OnConfusionMatrixArrived);
+			mWrapper->OnTestStatusUpdate += gcnew testStatusUpdate(this, &MainWindow::OnTestStatusUpdate);
 			mTimer->Interval = 100;
 			mTimer->Tick += gcnew EventHandler(this, &MainWindow::TimerEventProcessor);
 		}
@@ -60,6 +61,7 @@ namespace annWinForm {
 	private: System::Windows::Forms::Button^ cStopTraining;
 	private: System::Windows::Forms::Button^ cStartTesting;
 	private: System::Windows::Forms::DataGridView^ cConfMatrix;
+	private: System::Windows::Forms::ProgressBar^ cTestProgress;
 
 
 
@@ -84,6 +86,7 @@ namespace annWinForm {
 			this->cStopTraining = (gcnew System::Windows::Forms::Button());
 			this->cStartTesting = (gcnew System::Windows::Forms::Button());
 			this->cConfMatrix = (gcnew System::Windows::Forms::DataGridView());
+			this->cTestProgress = (gcnew System::Windows::Forms::ProgressBar());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cConfMatrix))->BeginInit();
 			this->SuspendLayout();
 			//
@@ -261,12 +264,24 @@ namespace annWinForm {
 				this->cConfMatrix->Columns->Add("label" + val, "l: " + val);
 
 			}
+
+			// 
+			// cTrainProgress
+			// 
+			this->cTestProgress->Location = System::Drawing::Point(274, 298);
+			this->cTestProgress->Maximum = 1000;
+			this->cTestProgress->Name = L"cTrainProgress";
+			this->cTestProgress->Size = System::Drawing::Size(491, 23);
+			this->cTestProgress->Step = 1;
+			this->cTestProgress->TabIndex = 18;
+
 			//
 			// MainWindow
 			//
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1132, 879);
+			this->Controls->Add(this->cTestProgress);
 			this->Controls->Add(this->cConfMatrix);
 			this->Controls->Add(this->cStartTesting);
 			this->Controls->Add(this->cStopTraining);
@@ -307,6 +322,7 @@ namespace annWinForm {
 	private: System::Void cConfigureNetwork_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void cPauseTraining_Click(System::Object^ sender, System::EventArgs^ e);
 	private: void OnConfusionMatrixArrived(ManagedConfusionMatrix result);
+	private: void OnTestStatusUpdate(int numImages);
 	private: Void TimerEventProcessor(Object^ myObject, EventArgs^ myEventArgs);
 
 	};

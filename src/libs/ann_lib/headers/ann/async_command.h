@@ -16,6 +16,7 @@ enum class commandToThread
 
 enum class commandToMain
 {
+    TESTING_PROGRESS_STATUS,
     TESTING_FINISHED
 };
 

@@ -5,9 +5,11 @@ namespace annWinForm {
 using ManagedConfusionMatrix = array<array<System::Int32>^>^ ;
 
 delegate void confusionMatrixArrived(ManagedConfusionMatrix);
+delegate void testStatusUpdate(int numberOfImages);
 
 interface struct IWrapperEvents{
     event confusionMatrixArrived^ OnConfusionMatrixArrived;
+    event testStatusUpdate^ OnTestStatusUpdate;
 
 };
 
@@ -40,6 +42,7 @@ public:
     }
 
     virtual event confusionMatrixArrived^ OnConfusionMatrixArrived;
+    virtual event testStatusUpdate^ OnTestStatusUpdate;
 };
 
 }

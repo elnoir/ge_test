@@ -7,6 +7,7 @@
 namespace ann { namespace async {
 
 ThreadCommandQueue::message::buffer serializeConfusionMatrix(math::ConfusionMatrix::internalMatrix &matrix);
+ThreadCommandQueue::message::buffer serializeTestStatus(size_t numImages);
 
 
 struct TrainState
@@ -36,7 +37,7 @@ AsyncLoop::AsyncLoop(ThreadCommandQueuePtr threadCommand, MainCommandQueuePtr ma
     , mTestDb(testDb)
     , mIncomingQueue(threadCommand)
     , mResultQueue(mainCommand)
-{
+{ 
 }
 
 void AsyncLoop::Run()
@@ -93,6 +94,13 @@ void AsyncLoop::Run()
                 case NetworkState::RECOGNIZE:
                     {
                         auto hasMoreElements = nextTestStep(*mNetwork, *testState);
+
+                        MainCommandQueue::message trainStatusMsg{
+                            commandToMain::TESTING_PROGRESS_STATUS,
+                            serializeTestStatus((testState->mCurrentIteration) * 50)
+                        };
+                        mResultQueue->pushCommand(trainStatusMsg);
+
                         if (!hasMoreElements)
                         {
                             mNetworkState = NetworkState::NONE;
@@ -130,6 +138,14 @@ ThreadCommandQueue::message::buffer serializeConfusionMatrix(math::ConfusionMatr
         std::memcpy(offset, &static_cast<uint32_t>(value), sizeof(uint32_t));
         offset += sizeof(uint32_t);
     }
+    return result;
+}
+
+ThreadCommandQueue::message::buffer serializeTestStatus(size_t numImages)
+{
+    ThreadCommandQueue::message::buffer result;
+    result.resize(sizeof(uint32_t));
+    std::memcpy(result.data(), &static_cast<uint32_t>(numImages), sizeof(uint32_t));
     return result;
 }
 

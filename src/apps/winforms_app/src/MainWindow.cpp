@@ -84,6 +84,11 @@ void MainWindow::OnConfusionMatrixArrived(ManagedConfusionMatrix result)
     }
 }
 
+void MainWindow::OnTestStatusUpdate(int result)
+{
+    cTestProgress->Value = result;
+}
+
 void MainWindow::TimerEventProcessor(Object^ myObject, EventArgs^ myEventArgs)
 {
     mWrapper->checkMessage();

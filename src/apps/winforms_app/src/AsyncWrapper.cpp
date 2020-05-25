@@ -9,7 +9,7 @@ namespace annWinForm
 using namespace System;
 
 ManagedConfusionMatrix deserializeConfusionMatrix(const ann::async::MainMessage::buffer &buffer);
-
+int deserializeImageCount(const ann::async::MainMessage::buffer& buffer);
 
 AsyncWrapper::AsyncWrapper()
 {
@@ -74,12 +74,29 @@ void AsyncWrapper::checkMessage(void)
         switch (result->mCommand)
         {
         case ann::async::commandToMain::TESTING_FINISHED:
-            auto confusionMatrix = deserializeConfusionMatrix(result->mBuffer);
-            OnConfusionMatrixArrived(confusionMatrix);
+            {
+                auto confusionMatrix = deserializeConfusionMatrix(result->mBuffer);
+                OnConfusionMatrixArrived(confusionMatrix);
+            }
+            break;
+
+        case ann::async::commandToMain::TESTING_PROGRESS_STATUS:
+            {
+                auto processedImageCount = deserializeImageCount(result->mBuffer);
+                OnTestStatusUpdate(processedImageCount);
+            }
             break;
         }
+
         result = mController->getAsyncCommand();
     }
+}
+
+int deserializeImageCount(const ann::async::MainMessage::buffer &buffer)
+{
+    int32_t data;
+    memcpy(&data, buffer.data(), sizeof(uint32_t));
+    return data;
 }
 
 
