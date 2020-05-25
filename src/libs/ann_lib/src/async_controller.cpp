@@ -76,4 +76,9 @@ namespace ann{ namespace async {
         return ann::IANNController::Status::EMPTY;
     }
 
+    ann::async::MainOptMessage AsyncController::getAsyncCommand()
+    {
+        return mThreadResult->getCommand();
+    }
+
 }} // namespace

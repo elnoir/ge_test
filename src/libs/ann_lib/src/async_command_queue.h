@@ -1,39 +1,28 @@
 #pragma once
 
-#include <boost/optional.hpp>
 #include <vector>
 #include <deque>
 #include <mutex>
+#include <ann/async_command.h>
 
 namespace ann { namespace async {
-
-
-template<typename T>
-struct AsyncCommand
-{
-    using buffer = std::vector<uint8_t>;
-    using commandType = T;
-
-    T mCommand;
-    buffer mBuffer;
-};
 
 template<typename T>
 class CommandQueue
 {
     using lock = std::unique_lock<std::mutex>;
 public:
-    using commandType = AsyncCommand<T>;
-    using optCommandType = boost::optional<commandType>;
+    using message = AsyncCommand<T>;
+    using optMessage = boost::optional<message>;
 
 private:
     std::mutex mMutex;
-    std::deque<commandType> mData;
+    std::deque<message> mData;
     std::condition_variable mCv;
 
 public:
 
-    void pushCommand(commandType command)
+    void pushCommand(message command)
     {
         {
             const lock l(mMutex);
@@ -42,7 +31,7 @@ public:
         mCv.notify_one();
     }
 
-    optCommandType getCommand(bool waitForOne = false)
+    optMessage getCommand(bool waitForOne = false)
     {
         lock l(mMutex);
         if (waitForOne)
@@ -53,7 +42,7 @@ public:
         }
         if (mData.size() > 0)
         {
-            commandType result = mData.front();
+            auto result = mData.front();
             mData.pop_front();
             return result;
         }
@@ -62,4 +51,4 @@ public:
 
 };
 
-}}
+}} // namespace

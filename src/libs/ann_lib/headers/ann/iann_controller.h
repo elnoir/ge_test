@@ -1,5 +1,7 @@
 #pragma once
 #include <db/idb.h>
+#include <boost/optional.hpp>
+#include "async_command.h"
 
 namespace ann {
 
@@ -35,6 +37,7 @@ public:
     virtual bool stopTest() = 0;
 
     virtual ann::IANNController::Status getStatus() = 0;
+    virtual ann::async::MainOptMessage getAsyncCommand() = 0;
 
     virtual ~IANNController() = default;
 };

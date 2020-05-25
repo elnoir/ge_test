@@ -22,6 +22,7 @@ public:
     bool startTest() override;
     bool stopTest() override;
     ann::IANNController::Status getStatus() override;
+    ann::async::MainOptMessage getAsyncCommand() override;
 
     virtual ~SyncController() = default;
 };

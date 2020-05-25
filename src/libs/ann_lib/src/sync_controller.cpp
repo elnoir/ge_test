@@ -103,4 +103,9 @@ ann::IANNController::Status SyncController::getStatus()
     return IANNController::Status::NONE;
 }
 
+ann::async::MainOptMessage SyncController::getAsyncCommand()
+{
+    return {};
+}
+
 } } // namespace

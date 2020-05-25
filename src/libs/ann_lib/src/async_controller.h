@@ -31,6 +31,8 @@ public:
 
     ann::IANNController::Status getStatus() override;
 
+    virtual ann::async::MainOptMessage getAsyncCommand() override;
+
     virtual ~AsyncController()
     {
         if (mAnnThread.joinable())
@@ -39,6 +41,8 @@ public:
             mAnnThread.join();
         }
     }
+
+
 };
 
 }} // namespace
