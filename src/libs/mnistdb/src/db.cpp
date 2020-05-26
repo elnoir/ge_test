@@ -155,9 +155,15 @@ math::MatrixF DB::getImageLabel(size_t index) const
     return result;
 }
 
-std::unique_ptr<db::DBInterface> createDB()
+size_t DB::getImageLabelAsInt(size_t index) const
 {
-    return std::unique_ptr<db::DBInterface>(new db::DB());
+    BOOST_ASSERT(mLabels);
+    return mLabels->getImageClass(index);
+}
+
+db::DBInterfacePtr createDB()
+{
+    return std::shared_ptr<db::DBInterface>(new db::DB());
 }
 
 }
