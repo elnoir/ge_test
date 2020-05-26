@@ -9,7 +9,7 @@ namespace ann { namespace async {
 
 ThreadCommandQueue::message::buffer serializeConfusionMatrix(const math::ConfusionMatrix::internalMatrix &matrix);
 ThreadCommandQueue::message::buffer serializeTestStatus(const size_t numImages);
-ThreadCommandQueue::message::buffer serializeTraintStatus(const IANN::trainData &trainData);
+ThreadCommandQueue::message::buffer serializeTrainStatus(const IANN::trainData &trainData);
 
 
 struct TrainState
@@ -108,7 +108,7 @@ void AsyncLoop::Run()
                         });
                         MainCommandQueue::message snapshotMessge{
                             commandToMain::TRAINING_SNAPSHOT,
-                            serializeTraintStatus(trainResult)
+                            serializeTrainStatus(trainResult)
                         };
                         mResultQueue->pushCommand(snapshotMessge);
 
@@ -173,7 +173,7 @@ ThreadCommandQueue::message::buffer serializeTestStatus(const size_t numImages)
     return result;
 }
 
-ThreadCommandQueue::message::buffer serializeTraintStatus(const IANN::trainData &trainData)
+ThreadCommandQueue::message::buffer serializeTrainStatus(const IANN::trainData &trainData)
 {
     ThreadCommandQueue::message::buffer result;
 
@@ -181,6 +181,7 @@ ThreadCommandQueue::message::buffer serializeTraintStatus(const IANN::trainData 
     auto offset = result.data();
     boost::for_each(trainData, [&offset](uint32_t value){
         std::memcpy(offset, &value, sizeof(value));
+        offset += sizeof(value);
     });
 
     return result;
