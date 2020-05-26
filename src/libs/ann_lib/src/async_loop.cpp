@@ -1,3 +1,4 @@
+#include <boost/range/algorithm/for_each.hpp>
 #include "async_loop.h"
 #include "ann.h"
 #include "shuffled_range.h"
@@ -6,8 +7,9 @@
 
 namespace ann { namespace async {
 
-ThreadCommandQueue::message::buffer serializeConfusionMatrix(math::ConfusionMatrix::internalMatrix &matrix);
-ThreadCommandQueue::message::buffer serializeTestStatus(size_t numImages);
+ThreadCommandQueue::message::buffer serializeConfusionMatrix(const math::ConfusionMatrix::internalMatrix &matrix);
+ThreadCommandQueue::message::buffer serializeTestStatus(const size_t numImages);
+ThreadCommandQueue::message::buffer serializeTraintStatus(const IANN::trainData &trainData);
 
 
 struct TrainState
@@ -21,6 +23,8 @@ struct TrainState
     float mLastLoss = 0.0f;
 
     size_t mCurrentIteration = 0;
+
+    bool mCreateSnapshot = false;
 };
 
 struct TestState
@@ -74,6 +78,12 @@ void AsyncLoop::Run()
                     mInternalState = InternalState::BUSY;
                     mNetworkState = NetworkState::TRAIN;
                     break;
+                case commandToThread::GET_TRAINING_SNAPSHOT:
+                    if (trainState)
+                    {
+                        trainState->mCreateSnapshot = true;
+                    }
+                    break;
                 case commandToThread::START_TESTING:
                     mInternalState = InternalState::BUSY;
                     mNetworkState = NetworkState::RECOGNIZE;
@@ -90,6 +100,20 @@ void AsyncLoop::Run()
             {
                 case NetworkState::TRAIN:
                     nextTrainStep(*mNetwork, *trainState);
+                    if (trainState->mCreateSnapshot)
+                    {
+                        auto trainResult = mNetwork->collectTrainData();
+                        boost::for_each(trainState->mCurrentRange, [&trainResult](size_t range) {
+                            trainResult.push_back(static_cast<uint32_t>(range));
+                        });
+                        MainCommandQueue::message snapshotMessge{
+                            commandToMain::TRAINING_SNAPSHOT,
+                            serializeTraintStatus(trainResult)
+                        };
+                        mResultQueue->pushCommand(snapshotMessge);
+
+                        trainState->mCreateSnapshot = false;
+                    }
                     break;
                 case NetworkState::RECOGNIZE:
                     {
@@ -124,7 +148,7 @@ void AsyncLoop::Run()
     std::cout << "worker thread finished" << std::endl;
 }
 
-ThreadCommandQueue::message::buffer serializeConfusionMatrix(math::ConfusionMatrix::internalMatrix &matrix)
+ThreadCommandQueue::message::buffer serializeConfusionMatrix(const math::ConfusionMatrix::internalMatrix &matrix)
 {
     ThreadCommandQueue::message::buffer result;
     const uint32_t rowCount = static_cast<uint32_t>(matrix.getRowCount());
@@ -141,11 +165,24 @@ ThreadCommandQueue::message::buffer serializeConfusionMatrix(math::ConfusionMatr
     return result;
 }
 
-ThreadCommandQueue::message::buffer serializeTestStatus(size_t numImages)
+ThreadCommandQueue::message::buffer serializeTestStatus(const size_t numImages)
 {
     ThreadCommandQueue::message::buffer result;
     result.resize(sizeof(uint32_t));
     std::memcpy(result.data(), &static_cast<uint32_t>(numImages), sizeof(uint32_t));
+    return result;
+}
+
+ThreadCommandQueue::message::buffer serializeTraintStatus(const IANN::trainData &trainData)
+{
+    ThreadCommandQueue::message::buffer result;
+
+    result.resize(trainData.size() * sizeof(uint32_t));
+    auto offset = result.data();
+    boost::for_each(trainData, [&offset](uint32_t value){
+        std::memcpy(offset, &value, sizeof(value));
+    });
+
     return result;
 }
 

@@ -86,4 +86,19 @@ const math::MatrixF& ANN::test(const math::MatrixF &input)
     return mLayers.back().getResult();
 }
 
+IANN::trainData ANN::collectTrainData()
+{
+    trainData result;
+
+    auto activationResult = mLayers.back().getResult();
+    const uint32_t numberOfSamples = static_cast<uint32_t>(activationResult.getColumnCount());
+    result.push_back(numberOfSamples);
+    for (size_t i = 0; i < numberOfSamples; ++i)
+    {
+        const uint32_t predictionLabel = static_cast<uint32_t>(math::getMaxElementIndex(activationResult.columnBegin(i), activationResult.columnEnd(i)));
+        result.push_back(predictionLabel);
+    }
+    return result;
+}
+
 }

@@ -30,11 +30,13 @@ public:
     virtual bool configureNetwork() =0;
 
     virtual bool startTraining() = 0;
+    virtual bool getTrainingSnapshot() = 0;
     virtual bool pauseTraining() = 0;
     virtual bool stopTraining() = 0;
 
     virtual bool startTest() = 0;
     virtual bool stopTest() = 0;
+
 
     virtual ann::IANNController::Status getStatus() = 0;
     virtual ann::async::MainOptMessage getAsyncCommand() = 0;

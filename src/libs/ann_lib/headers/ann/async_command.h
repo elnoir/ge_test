@@ -9,6 +9,7 @@ enum class commandToThread
 {
     CONFIGURE_NETWORK,
     START_TRAINING,
+    GET_TRAINING_SNAPSHOT,
     GO_IDLE,
     START_TESTING,
     STOP
@@ -16,6 +17,7 @@ enum class commandToThread
 
 enum class commandToMain
 {
+    TRAINING_SNAPSHOT,
     TESTING_PROGRESS_STATUS,
     TESTING_FINISHED
 };

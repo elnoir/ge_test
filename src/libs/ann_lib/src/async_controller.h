@@ -23,6 +23,7 @@ public:
     bool configureNetwork() override;
 
     bool startTraining() override;
+    bool getTrainingSnapshot() override;
     bool pauseTraining() override;
     bool stopTraining() override;
 

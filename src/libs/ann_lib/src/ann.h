@@ -13,6 +13,7 @@ public:
     void configureNetwork(size_t inputSize) override;
     float train(const math::MatrixF &inputs, const math::MatrixF &expectedOutput) override;
     const math::MatrixF& test(const math::MatrixF &input) override;
+    IANN::trainData collectTrainData() override;
 };
 
 }

@@ -47,6 +47,12 @@ namespace ann{ namespace async {
         return true;
     }
 
+    bool AsyncController::getTrainingSnapshot()
+    {
+        mThreadQueue->pushCommand({commandToThread::GET_TRAINING_SNAPSHOT, {}});
+        return true;
+    }
+
     bool AsyncController::pauseTraining()
     {
         mThreadQueue->pushCommand({commandToThread::GO_IDLE, {}});

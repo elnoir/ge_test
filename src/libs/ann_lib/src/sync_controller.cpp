@@ -58,6 +58,11 @@ bool SyncController::startTraining()
     return true;
 }
 
+bool SyncController::getTrainingSnapshot()
+{
+    return true;
+}
+
 bool SyncController::pauseTraining()
 {
     return true;
