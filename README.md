@@ -12,4 +12,14 @@ To build the project please follow these steps:
 5. Build ```conan build ..```
 6. Run the executable from build\bin\wpf_test.exe
 
-## Advanced build 
+## Advanced build
+
+### Debug build
+
+You can specify the build type at step 4.
+Use the --s build_type="Debug" switch to debug build.
+```conan install .. --build missing -s build_type=Debug```
+
+### Build from Visual Studio
+
+After step 4, a solution file will be generated at the ```build\ge_ai_app.sln``` path. You may open it and build from Visual Studio, but make sure that the buid configuration matches with the conan installs build configuration.
