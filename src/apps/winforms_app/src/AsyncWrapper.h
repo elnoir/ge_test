@@ -2,15 +2,31 @@
 
 namespace annWinForm {
 
-using ManagedConfusionMatrix = array<array<System::Int32>^>^ ;
+using ManagedConfusionMatrix = array<array<System::Int32>^>^;
+
+ref struct TrainSnapshot {
+
+    TrainSnapshot(int itemCount)
+    {
+        mImagePrediction = gcnew TrainSnapshot::IntArray(itemCount);
+        mImageIndex = gcnew TrainSnapshot::IntArray(itemCount);
+        mImageLabel = gcnew TrainSnapshot::IntArray(itemCount);
+    }
+    using IntArray = array<System::Int32>;
+
+    IntArray^ mImageIndex;
+    IntArray^ mImagePrediction;
+    IntArray^ mImageLabel;
+};
 
 delegate void confusionMatrixArrived(ManagedConfusionMatrix);
 delegate void testStatusUpdate(int numberOfImages);
+delegate void trainSnapshotUpdate(TrainSnapshot^ snapshot);
 
 interface struct IWrapperEvents{
     event confusionMatrixArrived^ OnConfusionMatrixArrived;
     event testStatusUpdate^ OnTestStatusUpdate;
-
+    event trainSnapshotUpdate^ OnTrainSnapshotUpdate;
 };
 
 ref class AsyncWrapper
@@ -25,6 +41,7 @@ public:
 
     void configureNetwork(void);
     void startTraining(void);
+    void createSnapshot(void);
     void stopTraining(void);
     void startTest(void);
     void stopTest(void);
@@ -43,6 +60,7 @@ public:
 
     virtual event confusionMatrixArrived^ OnConfusionMatrixArrived;
     virtual event testStatusUpdate^ OnTestStatusUpdate;
+    virtual event trainSnapshotUpdate^ OnTrainSnapshotUpdate;
 };
 
 }

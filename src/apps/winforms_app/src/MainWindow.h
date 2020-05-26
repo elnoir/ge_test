@@ -19,6 +19,7 @@ namespace annWinForm {
 			mWrapper = gcnew AsyncWrapper();
 			mWrapper->OnConfusionMatrixArrived += gcnew confusionMatrixArrived(this, &MainWindow::OnConfusionMatrixArrived);
 			mWrapper->OnTestStatusUpdate += gcnew testStatusUpdate(this, &MainWindow::OnTestStatusUpdate);
+			mWrapper->OnTrainSnapshotUpdate += gcnew trainSnapshotUpdate(this, &MainWindow::OnTrainSnapshotUpdate);
 			mTimer->Interval = 100;
 			mTimer->Tick += gcnew EventHandler(this, &MainWindow::TimerEventProcessor);
 		}
@@ -32,7 +33,7 @@ namespace annWinForm {
 			}
 		}
 
-		
+
 
 	private:
 		AsyncWrapper^ mWrapper;
@@ -63,6 +64,10 @@ namespace annWinForm {
 	private: System::Windows::Forms::DataGridView^ cConfMatrix;
 	private: System::Windows::Forms::ProgressBar^ cTestProgress;
 
+	private: System::Windows::Forms::Button^ cTrainSnapshot;
+	private: System::Windows::Forms::PictureBox^ cPictureBox;
+	private: System::Windows::Forms::DataGridView^ cTrainGrid;
+
 
 
 #pragma region Windows Form Designer generated code
@@ -87,7 +92,13 @@ namespace annWinForm {
 			this->cStartTesting = (gcnew System::Windows::Forms::Button());
 			this->cConfMatrix = (gcnew System::Windows::Forms::DataGridView());
 			this->cTestProgress = (gcnew System::Windows::Forms::ProgressBar());
+			this->cTrainSnapshot = (gcnew System::Windows::Forms::Button());
+			this->cPictureBox = (gcnew System::Windows::Forms::PictureBox());
+			this->cTrainGrid = (gcnew System::Windows::Forms::DataGridView());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cConfMatrix))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cPictureBox))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cTrainGrid))->BeginInit();
+
 			this->SuspendLayout();
 			//
 			// cTrainImageBrowse
@@ -265,9 +276,9 @@ namespace annWinForm {
 
 			}
 
-			// 
+			//
 			// cTrainProgress
-			// 
+			//
 			this->cTestProgress->Location = System::Drawing::Point(274, 298);
 			this->cTestProgress->Maximum = 1000;
 			this->cTestProgress->Name = L"cTrainProgress";
@@ -276,11 +287,50 @@ namespace annWinForm {
 			this->cTestProgress->TabIndex = 18;
 
 			//
+			// cTrainSnapshot
+			//
+			this->cTrainSnapshot->Location = System::Drawing::Point(771, 223);
+			this->cTrainSnapshot->Name = L"cTrainSnapshot";
+			this->cTrainSnapshot->Size = System::Drawing::Size(166, 52);
+			this->cTrainSnapshot->TabIndex = 19;
+			this->cTrainSnapshot->Text = L"Train Snapshot";
+			this->cTrainSnapshot->UseVisualStyleBackColor = true;
+			this->cTrainSnapshot->Click += gcnew System::EventHandler(this, &MainWindow::cTrainSnapshot_Click);
+			//
+			// cPictureBox
+			//
+			this->cPictureBox->Location = System::Drawing::Point(687, 743);
+			this->cPictureBox->Name = L"cPictureBox";
+			this->cPictureBox->Size = System::Drawing::Size(172, 173);
+			this->cPictureBox->TabIndex = 20;
+			this->cPictureBox->TabStop = false;
+			//
+			// cTrainGrid
+			//
+			this->cTrainGrid->AllowUserToAddRows = false;
+			this->cTrainGrid->AllowUserToDeleteRows = false;
+			this->cTrainGrid->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
+			this->cTrainGrid->Location = System::Drawing::Point(24, 743);
+			this->cTrainGrid->Name = L"cTrainGrid";
+			this->cTrainGrid->ReadOnly = true;
+			this->cTrainGrid->RowHeadersWidth = 51;
+			this->cTrainGrid->RowTemplate->Height = 24;
+			this->cTrainGrid->Size = System::Drawing::Size(600, 450);
+			this->cTrainGrid->TabIndex = 21;
+
+			cTrainGrid->Columns->Add("imageNumber", "Image #");
+			cTrainGrid->Columns->Add("imagePrediction", "Prediction");
+			cTrainGrid->Columns->Add("imageLabel", "Label");
+
+			//
 			// MainWindow
 			//
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1132, 879);
+			this->ClientSize = System::Drawing::Size(1132, 1200);
+			this->Controls->Add(this->cTrainGrid);
+			this->Controls->Add(this->cPictureBox);
+			this->Controls->Add(this->cTrainSnapshot);
 			this->Controls->Add(this->cTestProgress);
 			this->Controls->Add(this->cConfMatrix);
 			this->Controls->Add(this->cStartTesting);
@@ -304,6 +354,8 @@ namespace annWinForm {
 			this->PerformLayout();
 
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cConfMatrix))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cPictureBox))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->cTrainGrid))->EndInit();
 
 			this->components = gcnew System::ComponentModel::Container();
 			this->Text = L"Main Window";
@@ -321,9 +373,11 @@ namespace annWinForm {
 	private: System::Void cStartTesting_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void cConfigureNetwork_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void cPauseTraining_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void cTrainSnapshot_Click(System::Object^ sender, System::EventArgs^ e);
 	private: void OnConfusionMatrixArrived(ManagedConfusionMatrix result);
 	private: void OnTestStatusUpdate(int numImages);
 	private: Void TimerEventProcessor(Object^ myObject, EventArgs^ myEventArgs);
+	private: void OnTrainSnapshotUpdate(TrainSnapshot^ trainSnapshot);
 
 	};
 }

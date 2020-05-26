@@ -10,6 +10,7 @@ using namespace System;
 
 ManagedConfusionMatrix deserializeConfusionMatrix(const ann::async::MainMessage::buffer &buffer);
 int deserializeImageCount(const ann::async::MainMessage::buffer& buffer);
+TrainSnapshot^ deserializeSnapshot(const ann::async::MainMessage::buffer& buffer);
 
 AsyncWrapper::AsyncWrapper()
 {
@@ -50,6 +51,11 @@ void AsyncWrapper::startTraining(void)
     mController->startTraining();
 }
 
+void AsyncWrapper::createSnapshot(void)
+{
+    mController->getTrainingSnapshot();
+}
+
 void AsyncWrapper::stopTraining(void)
 {
     mController->stopTraining();
@@ -86,6 +92,18 @@ void AsyncWrapper::checkMessage(void)
                 OnTestStatusUpdate(processedImageCount);
             }
             break;
+        case ann::async::commandToMain::TRAINING_SNAPSHOT:
+            {
+                auto snapshot = deserializeSnapshot(result->mBuffer);
+                auto trainDb = mController->getTrainDb();
+                for (int i = 0; i < snapshot->mImageLabel->Length; ++i)
+                {
+                    snapshot->mImageLabel[i] = static_cast<int>(trainDb->getImageLabelAsInt(snapshot->mImageIndex[i]));
+                }
+                OnTrainSnapshotUpdate(snapshot);
+            }
+            break;
+
         }
 
         result = mController->getAsyncCommand();
@@ -120,6 +138,38 @@ ManagedConfusionMatrix deserializeConfusionMatrix(const ann::async::MainMessage:
             result[i][j] = data;
         }
     }
+    return result;
+}
+
+
+TrainSnapshot^ deserializeSnapshot(const ann::async::MainMessage::buffer& buffer)
+{
+    uint32_t itemCount = 0;
+    auto offset = buffer.data();
+
+    std::memcpy(&itemCount, offset, sizeof(uint32_t));
+    offset += sizeof(itemCount);
+
+    TrainSnapshot^ result = gcnew TrainSnapshot(itemCount);
+
+    for (int i = 0; i < static_cast<int>(itemCount); ++i)
+    {
+        uint32_t data;
+        std::memcpy(&data, offset, sizeof(data));
+        offset += sizeof(data);
+
+        result->mImagePrediction[i] = data;
+    }
+
+    for (int i = 0; i < static_cast<int>(itemCount); ++i)
+    {
+        uint32_t data;
+        std::memcpy(&data, offset, sizeof(data));
+        offset += sizeof(data);
+
+        result->mImageIndex[i] = data;
+    }
+
     return result;
 }
 

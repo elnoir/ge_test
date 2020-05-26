@@ -58,6 +58,10 @@ inline System::Void MainWindow::cStartTraining_Click(System::Object^ sender, Sys
     mWrapper->startTraining();
 }
 
+inline System::Void MainWindow::cTrainSnapshot_Click(System::Object^ sender, System::EventArgs^ e) {
+    mWrapper->createSnapshot();
+}
+
 inline System::Void MainWindow::cPauseTraining_Click(System::Object^ sender, System::EventArgs^ e) {
     mWrapper->stopTraining();
 }
@@ -92,6 +96,26 @@ void MainWindow::OnTestStatusUpdate(int result)
 void MainWindow::TimerEventProcessor(Object^ myObject, EventArgs^ myEventArgs)
 {
     mWrapper->checkMessage();
+}
+
+void MainWindow::OnTrainSnapshotUpdate(TrainSnapshot^ trainSnapshot)
+{
+    cTrainGrid->Rows->Clear();
+    for (int i = 0; i < trainSnapshot->mImageIndex->Length; ++i)
+    {
+        cTrainGrid->Rows->Add();
+        Int32^ prediction = trainSnapshot->mImagePrediction[i];
+        Int32^ label = trainSnapshot->mImageLabel[i];
+
+        auto color = (prediction->CompareTo(label) == 0 ) ? System::Drawing::Color::DarkOliveGreen : System::Drawing::Color::DarkOrange;
+
+
+        cTrainGrid->Rows[i]->Cells ["imageNumber"]->Value = trainSnapshot->mImageIndex[i].ToString();
+        cTrainGrid->Rows[i]->Cells["imagePrediction"]->Value = prediction->ToString();
+        cTrainGrid->Rows[i]->Cells["imagePrediction"]->Style->BackColor = color;
+        cTrainGrid->Rows[i]->Cells["imageLabel"]->Value = label->ToString();
+        cTrainGrid->Rows[i]->Cells["imageLabel"]->Style->BackColor = color;
+    }
 }
 
 inline System::Void MainWindow::cStopTraining_Click(System::Object^ sender, System::EventArgs^ e) {
