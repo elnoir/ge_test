@@ -161,6 +161,16 @@ size_t DB::getImageLabelAsInt(size_t index) const
     return mLabels->getImageClass(index);
 }
 
+size_t DB::getImageWidth() const
+{
+    return mImages->mWidth;
+}
+
+size_t DB::getImageHeight() const
+{
+    return mImages->mHeight;
+}
+
 db::DBInterfacePtr createDB()
 {
     return std::shared_ptr<db::DBInterface>(new db::DB());

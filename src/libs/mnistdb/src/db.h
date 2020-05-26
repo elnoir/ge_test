@@ -54,7 +54,8 @@ public:
     math::MatrixF getImageMatrix(size_t intdex) const override;
     math::MatrixF getImageLabel(size_t) const override;
     size_t getImageLabelAsInt(size_t index) const override;
-
+    size_t getImageWidth() const override;
+    size_t getImageHeight() const override;
 };
 
 }
