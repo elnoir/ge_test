@@ -55,6 +55,7 @@ inline System::Void MainWindow::cConfigureNetwork_Click(System::Object^ sender, 
 }
 
 inline System::Void MainWindow::cStartTraining_Click(System::Object^ sender, System::EventArgs^ e) {
+    cTrainGrid->Rows->Clear();
     cConfMatrix->Rows->Clear();
     mWrapper->startTraining();
 }
@@ -122,17 +123,13 @@ void MainWindow::OnTrainSnapshotUpdate(TrainSnapshot^ trainSnapshot)
 
 inline void MainWindow::TrainGridSelectionChanged(Object^ sender, EventArgs^ e)
 {
-    std::cout << "selection changed" << std::endl;
     if (cTrainGrid->SelectedRows->Count > 0)
     {
         auto number = System::Convert::ToInt32(cTrainGrid->SelectedRows[0]->Cells["imageNumber"]->Value);
-        std::cout << number << std::endl;
         auto bitmap = mWrapper->getBitmap(number);
         cPictureBox->Image = bitmap;
         cPictureBox->Width = bitmap->Width;
         cPictureBox->Height = bitmap->Height;
-        std::cout << bitmap->Width <<", "  << bitmap->Height << std::endl;
-
     }
 }
 
