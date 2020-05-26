@@ -12,6 +12,7 @@ class GeTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     requires = ["gtest/1.8.1@bincrafters/stable", "boost/1.71.0@conan/stable"]
+    build_requires = ["cmake/3.17.1"]
 
 
     def source(self):
