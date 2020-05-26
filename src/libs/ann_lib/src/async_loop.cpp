@@ -36,7 +36,7 @@ struct TestState
     size_t mCurrentIteration = 0;
 };
 
-AsyncLoop::AsyncLoop(ThreadCommandQueuePtr threadCommand, MainCommandQueuePtr mainCommand, SharedDbPtr trainDb, SharedDbPtr testDb)
+AsyncLoop::AsyncLoop(ThreadCommandQueuePtr threadCommand, MainCommandQueuePtr mainCommand, db::DBInterfacePtr trainDb, db::DBInterfacePtr testDb)
     : mTrainDb(trainDb)
     , mTestDb(testDb)
     , mIncomingQueue(threadCommand)

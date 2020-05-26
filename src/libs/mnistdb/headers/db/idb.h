@@ -15,11 +15,12 @@ public:
     virtual size_t getImageCount() const = 0;
     virtual math::MatrixF getImageMatrix(size_t index) const = 0;
     virtual math::MatrixF getImageLabel(size_t index) const = 0;
+    virtual size_t getImageLabelAsInt(size_t index) const = 0;
     virtual size_t getPixelCount() const = 0;
     virtual ~DBInterface() = default;
 };
 
-using DBInterfacePtr = std::unique_ptr<db::DBInterface>;
+using DBInterfacePtr = std::shared_ptr<db::DBInterface>;
 
 db::DBInterfacePtr createDB();
 

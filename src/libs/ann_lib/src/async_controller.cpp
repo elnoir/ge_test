@@ -4,7 +4,7 @@
 
 namespace ann{ namespace async {
 
-    void startCommandLoop(SharedDbPtr trainDb, SharedDbPtr testDb, ThreadCommandQueuePtr threadCommandsPtr, MainCommandQueuePtr mainCommandPtr)
+    void startCommandLoop(db::DBInterfacePtr trainDb, db::DBInterfacePtr testDb, ThreadCommandQueuePtr threadCommandsPtr, MainCommandQueuePtr mainCommandPtr)
     {
         AsyncLoop loopHandler(threadCommandsPtr, mainCommandPtr, trainDb, testDb);
         loopHandler.Run();
@@ -23,6 +23,11 @@ namespace ann{ namespace async {
         BOOST_ASSERT(dbPtr->isDbLoaded());
         mTestDb = std::move(dbPtr);
         return true;
+    }
+
+    db::DBInterfacePtr AsyncController::getTrainDb()
+    {
+        return mTrainDb;
     }
 
     bool AsyncController::configureNetwork()

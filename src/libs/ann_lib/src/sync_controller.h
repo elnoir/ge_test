@@ -13,6 +13,7 @@ class SyncController
 public:
     bool setTrainDb(db::DBInterfacePtr dbPtr) override;
     bool setTestDb(db::DBInterfacePtr dbPtr) override;
+    db::DBInterfacePtr getTrainDb() override;
     bool configureNetwork() override;
 
     bool startTraining() override;

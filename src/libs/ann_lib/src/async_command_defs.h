@@ -12,7 +12,5 @@ using MainCommandQueue = CommandQueue<commandToMain>;
 using ThreadCommandQueuePtr = std::shared_ptr<ThreadCommandQueue>;
 using MainCommandQueuePtr = std::shared_ptr<MainCommandQueue>;
 
-using SharedDbPtr = std::shared_ptr<db::DBInterface>;
-
 }
 }

@@ -9,8 +9,8 @@ struct TestState;
 
 class AsyncLoop
 {
-    SharedDbPtr mTrainDb;
-    SharedDbPtr mTestDb;
+    db::DBInterfacePtr mTrainDb;
+    db::DBInterfacePtr mTestDb;
 
     ThreadCommandQueuePtr mIncomingQueue;
     MainCommandQueuePtr mResultQueue;
@@ -34,7 +34,7 @@ class AsyncLoop
     std::unique_ptr<ann::IANN> mNetwork;
 
 public:
-    AsyncLoop(ThreadCommandQueuePtr threadCommand, MainCommandQueuePtr mainCommand, SharedDbPtr trainDb, SharedDbPtr testDb);
+    AsyncLoop(ThreadCommandQueuePtr threadCommand, MainCommandQueuePtr mainCommand, db::DBInterfacePtr trainDb, db::DBInterfacePtr testDb);
     void Run();
 
 private:

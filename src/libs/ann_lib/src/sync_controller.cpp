@@ -21,6 +21,11 @@ bool SyncController::setTestDb(db::DBInterfacePtr dbPtr)
     return true;
 }
 
+db::DBInterfacePtr SyncController::getTrainDb()
+{
+    return mTrainDb;
+}
+
 bool SyncController::configureNetwork()
 {
     BOOST_ASSERT(mTrainDb->isDbLoaded());
