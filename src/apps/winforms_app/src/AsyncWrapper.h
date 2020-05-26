@@ -58,6 +58,8 @@ public:
         delete mController;
     }
 
+    System::Drawing::Bitmap^ getBitmap(int imageNumber);
+
     virtual event confusionMatrixArrived^ OnConfusionMatrixArrived;
     virtual event testStatusUpdate^ OnTestStatusUpdate;
     virtual event trainSnapshotUpdate^ OnTrainSnapshotUpdate;

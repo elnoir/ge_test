@@ -55,10 +55,12 @@ inline System::Void MainWindow::cConfigureNetwork_Click(System::Object^ sender, 
 }
 
 inline System::Void MainWindow::cStartTraining_Click(System::Object^ sender, System::EventArgs^ e) {
+    cConfMatrix->Rows->Clear();
     mWrapper->startTraining();
 }
 
 inline System::Void MainWindow::cTrainSnapshot_Click(System::Object^ sender, System::EventArgs^ e) {
+    cTrainGrid->Rows->Clear();
     mWrapper->createSnapshot();
 }
 
@@ -110,11 +112,27 @@ void MainWindow::OnTrainSnapshotUpdate(TrainSnapshot^ trainSnapshot)
         auto color = (prediction->CompareTo(label) == 0 ) ? System::Drawing::Color::DarkOliveGreen : System::Drawing::Color::DarkOrange;
 
 
-        cTrainGrid->Rows[i]->Cells ["imageNumber"]->Value = trainSnapshot->mImageIndex[i].ToString();
+        cTrainGrid->Rows[i]->Cells["imageNumber"]->Value = trainSnapshot->mImageIndex[i].ToString();
         cTrainGrid->Rows[i]->Cells["imagePrediction"]->Value = prediction->ToString();
         cTrainGrid->Rows[i]->Cells["imagePrediction"]->Style->BackColor = color;
         cTrainGrid->Rows[i]->Cells["imageLabel"]->Value = label->ToString();
         cTrainGrid->Rows[i]->Cells["imageLabel"]->Style->BackColor = color;
+    }
+}
+
+inline void MainWindow::TrainGridSelectionChanged(Object^ sender, EventArgs^ e)
+{
+    std::cout << "selection changed" << std::endl;
+    if (cTrainGrid->SelectedRows->Count > 0)
+    {
+        auto number = System::Convert::ToInt32(cTrainGrid->SelectedRows[0]->Cells["imageNumber"]->Value);
+        std::cout << number << std::endl;
+        auto bitmap = mWrapper->getBitmap(number);
+        cPictureBox->Image = bitmap;
+        cPictureBox->Width = bitmap->Width;
+        cPictureBox->Height = bitmap->Height;
+        std::cout << bitmap->Width <<", "  << bitmap->Height << std::endl;
+
     }
 }
 

@@ -321,7 +321,10 @@ namespace annWinForm {
 			cTrainGrid->Columns->Add("imageNumber", "Image #");
 			cTrainGrid->Columns->Add("imagePrediction", "Prediction");
 			cTrainGrid->Columns->Add("imageLabel", "Label");
+			cTrainGrid->SelectionMode = System::Windows::Forms::DataGridViewSelectionMode::FullRowSelect;
+			cTrainGrid->SelectionChanged += gcnew System::EventHandler(this, &MainWindow::TrainGridSelectionChanged);
 
+	
 			//
 			// MainWindow
 			//
@@ -378,6 +381,8 @@ namespace annWinForm {
 	private: void OnTestStatusUpdate(int numImages);
 	private: Void TimerEventProcessor(Object^ myObject, EventArgs^ myEventArgs);
 	private: void OnTrainSnapshotUpdate(TrainSnapshot^ trainSnapshot);
+	private: void TrainGridSelectionChanged(Object^ sender, EventArgs^ e);
+
 
 	};
 }

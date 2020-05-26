@@ -110,6 +110,29 @@ void AsyncWrapper::checkMessage(void)
     }
 }
 
+System::Drawing::Bitmap^ AsyncWrapper::getBitmap(int imageNumber)
+{
+    auto trainDb = mController->getTrainDb();
+    auto m = trainDb->getImageMatrix(imageNumber);
+
+    const auto width = trainDb->getImageWidth();
+    const auto height = trainDb->getImageHeight();
+
+    auto result = gcnew System::Drawing::Bitmap(width, height);
+
+    for (int i = 0; i < width; ++i)
+    {
+        for (int j = 0; j < height; ++j)
+        {
+            int value = static_cast<int>(255 * (1.0f - m.get(width * j + i, 0)));
+            System::Drawing::Color c = System::Drawing::Color::FromArgb(value, value, value);
+            result->SetPixel(i, j, c);
+        }
+    }
+    return result;
+
+}
+
 int deserializeImageCount(const ann::async::MainMessage::buffer &buffer)
 {
     int32_t data;
