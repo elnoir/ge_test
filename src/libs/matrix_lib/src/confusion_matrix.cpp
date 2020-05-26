@@ -18,14 +18,8 @@ namespace math
 
         for (size_t i = 0; i < predictions.getColumnCount(); ++i)
         {
-            auto max_prediction_it = std::max_element(predictions.cColumnBegin(i), predictions.cColumnEnd(i));
-            auto max_label_it = std::max_element(labels.cColumnBegin(i), labels.cColumnEnd(i));
-
-            size_t prediction = std::distance(predictions.cColumnBegin(i), max_prediction_it);
-            size_t label = std::distance(labels.cColumnBegin(i), max_label_it);
-
-            BOOST_ASSERT(prediction < mData.getColumnCount());
-            BOOST_ASSERT(label < mData.getColumnCount());
+            size_t prediction = math::getMaxElementIndex(predictions.cColumnBegin(i), predictions.cColumnEnd(i));
+            size_t label = math::getMaxElementIndex(labels.cColumnBegin(i), labels.cColumnEnd(i));
 
             mData.set(prediction, label, mData.get(prediction, label) + 1);
         }

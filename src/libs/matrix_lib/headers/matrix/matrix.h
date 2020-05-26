@@ -403,4 +403,13 @@ Matrix<T> columnWiseSoftMax(const Matrix<T>& in)
     auto result = r.divideWithRow(s);
     return  result;
 }
+
+template<class IT>
+size_t getMaxElementIndex(IT begin, IT end)
+{
+    auto max_it = std::max_element(begin, end);
+    return std::distance(begin, max_it);
+
+}
+
 }
