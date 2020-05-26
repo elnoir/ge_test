@@ -118,7 +118,7 @@ System::Drawing::Bitmap^ AsyncWrapper::getBitmap(int imageNumber)
     const auto width = trainDb->getImageWidth();
     const auto height = trainDb->getImageHeight();
 
-    auto result = gcnew System::Drawing::Bitmap(width, height);
+    auto result = gcnew System::Drawing::Bitmap(static_cast<int>(width), static_cast<int>(height));
 
     for (int i = 0; i < width; ++i)
     {
