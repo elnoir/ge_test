@@ -37,7 +37,7 @@ AsyncLoop::AsyncLoop(ThreadCommandQueuePtr threadCommand, MainCommandQueuePtr ma
     , mTestDb(testDb)
     , mIncomingQueue(threadCommand)
     , mResultQueue(mainCommand)
-{ 
+{
 }
 
 void AsyncLoop::Run()
@@ -163,17 +163,14 @@ ShuffledRange::IndexedRange generateNewRange(ShuffledRange &generator, size_t co
 
 void AsyncLoop::nextTrainStep(ann::IANN &network, TrainState& state)
 {
-    const size_t iterLimit = 15;
     const size_t batchSize = 50;
 
-    if ((state.mCurrentIteration % iterLimit) == 0)
-    {
-        std::cout << state.mCurrentIteration<< ": " << state.mLastLoss << std::endl;
+    std::cout << state.mCurrentIteration<< ": " << state.mLastLoss << std::endl;
 
-        state.mCurrentRange = generateNewRange(*state.mRangeGenerator, batchSize);
-        state.mImages = getImageDataBasedOnRange(*mTrainDb, state.mCurrentRange);
-        state.mLabels = getImageClassBasedOnRange(*mTrainDb, state.mCurrentRange);
-    }
+    state.mCurrentRange = generateNewRange(*state.mRangeGenerator, batchSize);
+    state.mImages = getImageDataBasedOnRange(*mTrainDb, state.mCurrentRange);
+    state.mLabels = getImageClassBasedOnRange(*mTrainDb, state.mCurrentRange);
+
     state.mLastLoss = mNetwork->train(state.mImages, state.mLabels);
     state.mCurrentIteration += 1;
 }
