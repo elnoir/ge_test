@@ -159,7 +159,8 @@ ThreadCommandQueue::message::buffer serializeConfusionMatrix(const math::Confusi
     offset += sizeof(uint32_t);
     for (auto value : matrix)
     {
-        std::memcpy(offset, &static_cast<uint32_t>(value), sizeof(uint32_t));
+        auto v = static_cast<uint32_t>(value);
+        std::memcpy(offset, &v, sizeof(uint32_t));
         offset += sizeof(uint32_t);
     }
     return result;
@@ -169,7 +170,8 @@ ThreadCommandQueue::message::buffer serializeTestStatus(const size_t numImages)
 {
     ThreadCommandQueue::message::buffer result;
     result.resize(sizeof(uint32_t));
-    std::memcpy(result.data(), &static_cast<uint32_t>(numImages), sizeof(uint32_t));
+    auto v = static_cast<uint32_t>(numImages);
+    std::memcpy(result.data(), &v, sizeof(uint32_t));
     return result;
 }
 
